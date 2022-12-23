@@ -7,12 +7,14 @@ fetch("http://localhost:5678/api/categories")
     let parent = document.getElementById("portfolio");
     parent.appendChild(filters);
     parent.insertBefore(filters, sibling[0]);
-    filters.innerHTML = "<li>Tous</li>";
+    let tousLi = document.createElement("li");
+    tousLi.textContent = "Tous";
+    filters.appendChild(tousLi);
 
     for (category of categories) {
       let newLi = document.createElement("li");
+      newLi.textContent = category.name;
       filters.appendChild(newLi);
-      newLi.innerHTML = `${category.name}`;
     }
   });
 //on veut maintenant rendre ces filtres fonctionnels donc on change d'api pour récupérer le backend des projets
@@ -34,8 +36,15 @@ fetch("http://localhost:5678/api/works")
             newLi[i].textContent === "Tous"
           ) {
             gallery[0].appendChild(newFigure);
-            newFigure.innerHTML = `<img crossorigin="anonymous" src=${work.imageUrl} alt="${work.title}">
-                        <figcaption>${work.title}</figcaption>`;
+            let img = document.createElement("img");
+            let figCaption = document.createElement("figcaption");
+            img.setAttribute("crossorigin", "anonymous");
+            img.setAttribute("src", work.imageUrl);
+            img.setAttribute("alt", work.title);
+            figCaption.textContent= work.title;
+      
+            newFigure.appendChild(img);
+            newFigure.appendChild(figCaption);
           }
         }
       });
