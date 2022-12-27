@@ -44,13 +44,14 @@ login.addEventListener("click", function() {
       // création des boutons modifier et du mode édition
 
       let imgIntroduction = document.querySelector("#introduction img");
-      imgIntroduction.insertAdjacentHTML("afterend",`<div><i class="fa-regular fa-pen-to-square"></i> modifier</div>`);
+      imgIntroduction.insertAdjacentHTML("afterend",`<div class="modify-img"><i class="fa-regular fa-pen-to-square"></i> modifier</div>`);
       
       let description = document.querySelector("#introduction article");
-      description.insertAdjacentHTML("afterbegin",`<div><i class="fa-regular fa-pen-to-square"></i> modifier</div>`);
+      description.insertAdjacentHTML("afterbegin",`<div class="modify-description"><i class="fa-regular fa-pen-to-square"></i> modifier</div>`);
 
-      let gallery = document.getElementsByClassName("gallery");
-      gallery[0].insertAdjacentHTML("beforebegin",`<div><i class="fa-regular fa-pen-to-square"></i> modifier</div>`);
+
+      let modifyWorks = document.querySelector("#portfolio  h2");
+      modifyWorks.insertAdjacentHTML("beforeend",`<div class="modify-works"><i class="fa-regular fa-pen-to-square"></i> modifier</div>`);
 
       let header = document.getElementsByTagName("header");
       let editMode = document.createElement("div");
@@ -62,7 +63,45 @@ login.addEventListener("click", function() {
     }
   }
 
-  editPage();
+  editPage(); //appel de la fonction editPage si l'admin est connecté
+
+// FONCTION QUI PERMET DE FAIRE APPARAITRE LA MODALE POUR MODIFIER LES PROJETS
+
+  let editWorks= document.getElementsByClassName("modify-works");
+  editWorks[0].addEventListener("click", function() {
+
+    // background grisé
+    let body = document.getElementsByTagName("body");
+    let newDiv = document.createElement("div");
+    newDiv.className ="js-modal-background";
+    body[0].appendChild(newDiv);
+
+    // création de la modale
+    let aside = document.createElement("aside");
+    aside.className ="js-modal";
+
+    let icone = document.createElement("i");
+    icone.className = "fa-solid fa-xmark";
+    aside.appendChild(icone);
+
+    let title = document.createElement("h3");
+    title.textContent ="Galerie photo"
+    aside.appendChild(title);
+
+    let div = document.createElement("div");
+    aside.appendChild(div);
+
+    let button = document.createElement("button");
+    button.textContent= "Ajouter une photo";
+    aside.appendChild(button);
+
+    let p = document.createElement("p");
+    p.textContent= "Supprimer la galerie";
+    aside.appendChild(p);
+
+    body[0].appendChild(aside);
+  
+  });
 
   
 
