@@ -3,6 +3,7 @@ fetch("http://localhost:5678/api/categories")
   .then((res) => res.json())
   .then((categories) => {
     const filters = document.createElement("ul");
+    filters.id= "ulfilters";
     const sibling = document.getElementsByClassName("gallery");
     let parent = document.getElementById("portfolio");
     parent.appendChild(filters);

@@ -245,13 +245,12 @@ footer nav ul {
 
 	background-color: black;
 	width:auto;
-	margin-left: -500px;
-	margin-right: -500px;
+	margin-left: -1000px;
+	margin-right: -1000px;
 	height: 59px;
 	line-height:59px;
 	color: white;
 	text-align: center;
-	z-index: 1;
 }
 
 .button {
@@ -270,7 +269,6 @@ footer nav ul {
 	margin: 15px 0 0 55px;
 }
 
-
 .modify-works {
 	font-family: 'Work Sans';
 	font-size: 14px !important;
@@ -279,7 +277,6 @@ footer nav ul {
 	position: relative;
 	left:150px;
 	bottom: 20px;
-	
 }
 
 .js-modal-background {
@@ -292,30 +289,96 @@ footer nav ul {
 }
 
 .js-modal {
-	width: 40%;
-	height: 70%;
+	width: 630px;
+	height: 731px;
 	background-color: white;
 	z-index: 1;
 	position:fixed;
-	top:15%;
-	left:30%;
+	top:50%;
+	left:50%;
+	transform: translate(-50%, -50%);
 	border-radius: 10px;
 }
 
 aside button {
-		font-family: 'Syne';
-		font-weight: 700;
-		color: white;
-		background-color: #1D6154;
-		margin : 2em auto ;
-		width: 180px;
-		text-align: center;
-		border-radius: 60px ;
+	font-family: 'Syne';
+	color: white;
+	background-color: #1D6154;
+	margin : 10px 30% 20px 30%;
+	width: 237px;
+	height: 36px;
+	border-radius: 60px ;
+	border: none;
 }
 
-/* .js-modal h3 {
-	
-} */
+aside p {
+	text-align: center;
+	color: #D65353;
+	font-family: 'Syne';
+	font-size: 12px;
+}
+
+.js-modal figure {
+	width: 77px;
+	height: 137px;
+	margin: 3.5px;
+}
+
+.js-modal img {
+	width: 77px;
+	height: 130px;
+	object-fit: contain;
+}
+
+.fa-trash-can {
+	position: relative;
+	top: -115px;
+	left: 50px;
+	color: white;
+	background-color: black;
+	padding: 5px;
+	font-size: 12px;
+	border-radius: 2px;
+}
+
+.fa-arrows-up-down-left-right {
+	position:fixed;
+	top: 137px;
+	left: 130px;
+	color: white;
+	background-color: black;
+	padding: 4.7px 4px 5.3px 4px;
+	font-size: 12px;
+	border-radius: 2px;
+}
+
+.js-modal div {
+	display: flex;
+	flex-wrap: wrap;
+	width: 430px;
+	margin-left: 100px;
+	padding-bottom: 32px;
+	border-bottom: 1px solid #B3B3B3;
+}
+
+.js-modal h3 {
+	text-align: center;
+	font-weight: 400;
+	font-size: 26px;
+	margin: 35px 0;
+}
+
+.js-modal figcaption {
+	font-size: 12px;
+	margin-top: -30px;
+}
+
+.fa-xmark {
+	font-size:20px;
+	position: relative;
+	left: 595px;
+	top: 20px;
+}
 
 
 
