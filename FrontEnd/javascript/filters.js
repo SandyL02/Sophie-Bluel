@@ -18,6 +18,8 @@ fetch("http://localhost:5678/api/categories")
       filters.appendChild(newLi);
     }
   });
+
+
 //on veut maintenant rendre ces filtres fonctionnels donc on change d'api pour récupérer le backend des projets
 fetch("http://localhost:5678/api/works")
   .then((res) => res.json())
@@ -30,24 +32,24 @@ fetch("http://localhost:5678/api/works")
         gallery[0].innerHTML = ""; // on vide le contenu du HTML dès que l'on clique sur un filtre
 
         for (work of works) {
-          let newFigure = document.createElement("figure");
           //on ajoute uniquement au HTML les projets qui ont la bonne catégorie OU tous les projets si on clique sur TOUS
           if (
             work.category.name === newLi[i].textContent ||
             newLi[i].textContent === "Tous"
           ) {
-            gallery[0].appendChild(newFigure);
-            let img = document.createElement("img");
-            let figCaption = document.createElement("figcaption");
-            img.setAttribute("crossorigin", "anonymous");
-            img.setAttribute("src", work.imageUrl);
-            img.setAttribute("alt", work.title);
-            figCaption.textContent= work.title;
-      
-            newFigure.appendChild(img);
-            newFigure.appendChild(figCaption);
+            addWork();
           }
         }
       });
     }
   });
+ 
+  
+
+  
+  
+
+ 
+  
+
+  
