@@ -142,20 +142,27 @@ function createModal() {
         newFigure.appendChild(figCaption);
       }
     });
-
+  jsGalery.className ="js-galery"
   aside.appendChild(jsGalery);
+
+
   let arrows = document.createElement("i");
   arrows.className = "fa-solid fa-arrows-up-down-left-right";
   aside.appendChild(arrows);
 
+  let divButton =document.createElement("div");
+  divButton.className ="div-button";
+
   let button = document.createElement("button");
   button.textContent = "Ajouter une photo";
   button.id = "addPicture";
-  aside.appendChild(button);
+  divButton.appendChild(button);
 
   let p = document.createElement("p");
   p.textContent = "Supprimer la galerie";
-  aside.appendChild(p);
+  divButton.appendChild(p);
+
+  aside.appendChild(divButton);
 
   body[0].appendChild(aside);
 }
@@ -243,14 +250,32 @@ function createModalPicture() {
   aside.appendChild(title);
 
   let modalDivNewPicture = document.createElement("div");
+  modalDivNewPicture.className= "new-project"
+  modalDivNewPicture.insertAdjacentHTML("afterbegin",
+  `<form enctype="multipart/form-data" method="post" name="sendwork">
+   <input type="file" name="workimage" id="form-img" required/><br />
+   <label>Titre</label><br />
+   <input type="text" name="worktitle" required id="form-title"/><br />
+   <label>Catégorie</label><br />
+   <select name="workcategory" id="form-category" required>
+      <option value="1">Objets</option>
+      <option value="2">Appartements</option>
+      <option value="3">Hotels & restaurants</option>
+    </select>
+   </form>
+  `);
   aside.appendChild(modalDivNewPicture);
 
+  let divButtonValider = document.createElement("div");
+  divButtonValider.className ="button-valider";
   let button = document.createElement("button");
   button.textContent = "Valider";
-  button.className = "submitWork";
-  aside.appendChild(button);
+  button.className = "submit-work grey-button";
+  divButtonValider.appendChild(button);
+  aside.appendChild(divButtonValider);
 
   body[0].appendChild(aside);
+  
 }
 
 let modalPictureGenerated = false;
@@ -278,5 +303,43 @@ editWorks[0].addEventListener("click", function () {
       modalPicture[0].style.display = "none";
       modal[0].style.display = "block";
     })})});
+
+// ENVOYER UN NOUVEAU PROJET
+
+function sendWork() {
+  const workimage = document.getElementById("form-img");
+  const worktitle = document.getElementById("form-title");
+  const workcategory = document.getElementById("form-category");
+  const data = new FormData();
+  data.append('image', workimage.value);
+  data.append('title', worktitle.value);
+  data.append('category', workcategory.value);
+  console.log(data)
+  fetch("http://localhost:5678/api/works", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + sessionStorage.getItem("token")
+    },
+    body: data
+  })
+  .then((res) => res.json())
+  .then((log) => console.log(log))
+
+};
+
+// SI ON CLIQUE SUR LE BOUTON VALIDER PROJET ON APPELLE LA FONCTION SENDWORK
+editWorks[0].addEventListener("click", function () {
+  let newProject = document.getElementById("addPicture");
+ 
+  newProject.addEventListener("click", function () {
+    
+    setTimeout(function () {
+      let submitWork = document.getElementsByClassName("submit-work");
+      submitWork[0].addEventListener("click", function(){
+        sendWork();
+     
+  }, 200)
+})})});
+
   
 
