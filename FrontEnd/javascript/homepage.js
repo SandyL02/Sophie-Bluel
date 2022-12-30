@@ -84,8 +84,8 @@ function editPage() {
     // augmentation de la margin bottom du titre suite à la suppression des filtres
     const portfolioTitle = document.querySelector("#portfolio h2");
     portfolioTitle.style.marginBottom = "80px";
-  }
-}
+  }};
+
 
 editPage(); //appel de la fonction editPage si l'admin est connecté
 
@@ -94,8 +94,8 @@ editPage(); //appel de la fonction editPage si l'admin est connecté
 const body = document.getElementsByTagName("body");
 const editWorks = document.getElementsByClassName("modify-works");
 let modalGenerated = false;
-// background grisé
 
+// background grisé
 function createBackground() {
   let newDiv = document.createElement("div");
   newDiv.className = "js-modal-background";
@@ -150,6 +150,7 @@ function createModal() {
 
   let button = document.createElement("button");
   button.textContent = "Ajouter une photo";
+  button.id = "addPicture";
   aside.appendChild(button);
 
   let p = document.createElement("p");
@@ -179,10 +180,12 @@ let modal = document.getElementsByClassName("js-modal");
 let outOfModal = document.getElementsByClassName("js-modal-background");
 let crossModal = document.getElementsByClassName("fa-xmark");
 let modalPicture = document.getElementsByClassName("js-modal-picture");
+let closeModalTwo = document.getElementsByClassName("close-modale-picture");
 
 function closeModal() {
   modal[0].style.display = "none";
   outOfModal[0].style.display = "none";
+  modalPicture[0].style.display = "none";
 }
 
 editWorks[0].addEventListener("click", function () {
@@ -195,7 +198,11 @@ editWorks[0].addEventListener("click", function () {
   crossModal[0].addEventListener("click", function () {
     closeModal();
   });
-});
+  // FERME LA MODALE PICTURE EN CLIQUANT SUR LA CROIX
+  closeModalTwo[0].addEventListener("click", function () {
+    closeModal();
+  })});
+
 
 // SUPPRESSION D'UN TRAVAIL DE L'ARCHITECTE
 editWorks[0].addEventListener("click", function () {
@@ -211,83 +218,65 @@ editWorks[0].addEventListener("click", function () {
             Authorization: "Bearer " + sessionStorage.getItem("token"),
           },
         });
-
         document.querySelector(`[data-id="${trashbin.dataset.id}"`).remove(); //supprime le projet de façon dynamique sur la page du site
         trashbin.parentElement.remove(); //supprime le projet dans la modale
         alert("Item Deleted");
-      });
-    }
-  }, 500);
-});
+      })}}, 500)});
+ 
+// AJOUT DE LA MODALE AJOUTER PROJET
 
-//  // AJOUT DE LA MODALE AJOUTER PROJET
+function createModalPicture() {
+  // création entièrement en javascript de la modale nouveau projet via createElement
+  let aside = document.createElement("aside");
+  aside.className = "js-modal-picture";
 
-//  let modalPicture = document.getElementsByClassName("js-modal-picture");
-//  let newProject = document.getElementsByClassName("addPicture");
+  let icone = document.createElement("i");
+  icone.className = "fa-solid fa-xmark close-modale-picture";
+  aside.appendChild(icone);
 
-//  let body = document.getElementsByTagName("body");
-//  let modalPictureGenerated = false;
+  let arrow = document.createElement("i");
+  arrow.className = "fa-solid fa-arrow-left";
+  aside.appendChild(arrow);
 
-//   // FERME LA MODALE CAR ON  AJOUTE UNE NOUVELLE PHOTO
-//   newProject[0].addEventListener("click", function() {
+  let title = document.createElement("h3");
+  title.textContent = "Ajout Photo";
+  aside.appendChild(title);
 
-//    modal[0].style.display = "none";
+  let modalDivNewPicture = document.createElement("div");
+  aside.appendChild(modalDivNewPicture);
 
-//    if (modalPictureGenerated === true) {
+  let button = document.createElement("button");
+  button.textContent = "Valider";
+  button.className = "submitWork";
+  aside.appendChild(button);
 
-//      modalPicture[0].style.display = "block";
+  body[0].appendChild(aside);
+}
 
-//    } else if (modalPictureGenerated === false) {
+let modalPictureGenerated = false;
 
-//      // création entièrement en javascript de la modale nouveau projet via createElement
-//      let aside = document.createElement("aside");
-//      aside.className = "js-modal-picture";
+editWorks[0].addEventListener("click", function () {
+  let newProject = document.getElementById("addPicture");
+  newProject.addEventListener("click", function () {
+    modal[0].style.display = "none"; // ferme la modale car on fait apparaître la modale picture
 
-//      let icone = document.createElement("i");
-//      icone.className = "fa-solid fa-xmark close-modale-picture";
-//      aside.appendChild(icone);
+    if (modalPictureGenerated === true) {
+      modalPicture[0].style.display = "block"; //on refait apparaître la modale picture si elle existe déjà
+    } else if (modalPictureGenerated === false) {
+      //si la modale n'existe pas on appelle la fonction createModalPicture
+      createModalPicture();
+      // la modale est générée donc on retoune true pour ne pas multiplier la modale picture dans le code source
+      modalPictureGenerated = true;
+    }})});
 
-//      let arrow = document.createElement("i");
-//      arrow.className = "fa-solid fa-arrow-left";
-//      aside.appendChild(arrow);
+// RETOURNE SUR L'ANCIENNE MODALE SI ON CLIQUE SUR PRECEDENT
+editWorks[0].addEventListener("click", function () {
+  let newProject = document.getElementById("addPicture");
+  newProject.addEventListener("click", function () {
+    let previously = document.getElementsByClassName("fa-arrow-left");
+    previously[0].addEventListener("click", function () {
+      modalPicture[0].style.display = "none";
+      modal[0].style.display = "block";
+    })})});
+  
 
-//      let title = document.createElement("h3");
-//      title.textContent = "Ajout Photo";
-//      aside.appendChild(title);
-
-//      let modalDivNewPicture = document.createElement("div");
-//      aside.appendChild(modalDivNewPicture);
-
-//      let button = document.createElement("button");
-//      button.textContent = "Valider";
-//      button.className ="submitWork";
-//      aside.appendChild(button);
-
-//      body[0].appendChild(aside);
-
-//    // la modale est générée donc on retoune true pour ne pas multiplier la modale dans le code source
-//    modalPictureGenerated = true;
-
-//    // RETOURNE SUR L'ANCIENNE MODALE SI ON CLIQUE SUR PRECEDENT
-//    let previously = document.getElementsByClassName("fa-arrow-left");
-//   previously[0].addEventListener("click", function (){
-//    modalPicture[0].style.display = "none";
-//    modal[0].style.display= "block";
-//   });
-
-//  }});
-
-//    let closeModalTwo = document.getElementsByClassName("close-modale-picture");
-
-//    // FERME LA MODALE EN CLIQUANT EN DEHORS DE LA MODALE VIA LE BACKGROUND GRIS
-//    outOfModal[0].addEventListener("click", function () {
-//      modalPicture[0].style.display = "none";
-//      outOfModal[0].style.display = "none";
-//    });
-
-//    // FERME LA MODALE EN CLIQUANT SUR LA CROIX
-//    setTimeout(function () {
-//    closeModalTwo[0].addEventListener("click", function () {
-//      modalPicture[0].style.display = "none";
-//      outOfModal[0].style.display = "none";
-//    });

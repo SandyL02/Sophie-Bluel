@@ -288,7 +288,7 @@ footer nav ul {
 	left:0;
 }
 
-.js-modal {
+.js-modal, .js-modal-picture {
 	width: 630px;
 	height: 731px;
 	background-color: white;
@@ -361,7 +361,7 @@ aside p {
 	border-bottom: 1px solid #B3B3B3;
 }
 
-.js-modal h3 {
+.js-modal h3, .js-modal-picture h3 {
 	text-align: center;
 	font-weight: 400;
 	font-size: 26px;

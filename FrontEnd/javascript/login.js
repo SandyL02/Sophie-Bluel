@@ -15,32 +15,28 @@ const submit = document.getElementById("button-login");
 const email = document.getElementById("email");
 const password = document.getElementById("password");
 
-submit.addEventListener("click", function(event) {
-    event.preventDefault();
-let user = {
+submit.addEventListener("click", function (event) {
+  event.preventDefault();
+  let user = {
     email: email.value,
-    password: password.value 
-}
+    password: password.value,
+  };
 
-fetch("http://localhost:5678/api/users/login", {
-    method: 'POST',
+  fetch("http://localhost:5678/api/users/login", {
+    method: "POST",
     headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+      "Content-Type": "application/json",
+      Accept: "application/json",
     },
-    body: JSON.stringify(user)
-})
+    body: JSON.stringify(user),
+  })
     .then((res) => res.json())
     .then((loginInfos) => {
-        if (loginInfos.token) {
-
-            sessionStorage.setItem("token", loginInfos.token); // on stocke le token dans la sessionStorage
-            window.location.href="index.html";                  // puis on redirige vers la page principale
-        
-        }
-        else {
-            alert("Erreur dans l’identifiant ou le mot de passe"); // erreur 401 ou 404 ( non autorisé ou utilisateur non trouvé)
-        }
-    })
-
+      if (loginInfos.token) {
+        sessionStorage.setItem("token", loginInfos.token); // on stocke le token dans la sessionStorage
+        window.location.href = "index.html"; // puis on redirige vers la page principale
+      } else {
+        alert("Erreur dans l’identifiant ou le mot de passe"); // erreur 401 ou 404 ( non autorisé ou utilisateur non trouvé)
+      }
+    });
 });

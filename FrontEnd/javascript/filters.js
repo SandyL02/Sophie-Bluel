@@ -3,7 +3,7 @@ fetch("http://localhost:5678/api/categories")
   .then((res) => res.json())
   .then((categories) => {
     const filters = document.createElement("ul");
-    filters.id= "ulfilters";
+    filters.id = "ulfilters";
     const sibling = document.getElementsByClassName("gallery");
     let parent = document.getElementById("portfolio");
     parent.appendChild(filters);
@@ -16,8 +16,7 @@ fetch("http://localhost:5678/api/categories")
       let newLi = document.createElement("li");
       newLi.textContent = category.name;
       filters.appendChild(newLi);
-    }
-  });
+    }});
 
 
 //on veut maintenant rendre ces filtres fonctionnels donc on change d'api pour récupérer le backend des projets
@@ -38,18 +37,5 @@ fetch("http://localhost:5678/api/works")
             newLi[i].textContent === "Tous"
           ) {
             addWork();
-          }
-        }
-      });
-    }
-  });
- 
-  
-
-  
-  
-
- 
-  
-
-  
+          }}})}});
+        
