@@ -405,10 +405,21 @@ aside p {
 	background-image: url(./images/form_img.png);
 	background-repeat: no-repeat;
 	object-fit: contain;
-	border: none;
 	width: 460px;
-	height:180px;
+	height:170px;
 	margin: 20px 0 20px -10px;
+	z-index:0;
+	
+}
+
+#label-file {
+	position: absolute;
+	top: 107px;
+	width: 460px;
+	height:38px;
+	margin: 20px 0 20px -10px;
+	background: #E8F1F7;
+	z-index:1;
 }
 
 #form-title, #form-category {
@@ -438,9 +449,33 @@ aside p {
 	height:670px;
 }
 
-li, .fa-solid, input, select, button, .modify-works, .modify-img, .modify-description {
+li, .fa-solid, input, label, select, button, .modify-works, .modify-img, .modify-description {
 	cursor: pointer;
 }
+
+#preview {
+	max-width:460px;
+	max-height:185px;
+	object-fit: cover;
+	position: absolute;
+	z-index:2;
+	top:220px;
+	left:50%;
+	transform: translate(-50%, -50%);
+	display: none;
+	
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

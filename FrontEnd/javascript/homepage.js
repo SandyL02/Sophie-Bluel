@@ -191,7 +191,6 @@ let closeModalTwo = document.getElementsByClassName("close-modale-picture");
 function closeModal() {
   modal[0].style.display = "none";
   outOfModal[0].style.display = "none";
-  modalPicture[0].style.display = "none";
 }
 
 editWorks[0].addEventListener("click", function () {
@@ -209,9 +208,16 @@ editWorks[0].addEventListener("click", function () {
   newProject.addEventListener("click", function () {
     setTimeout(function () {
       closeModalTwo[0].addEventListener("click", function () {
-        closeModal(), 150;
+        closeModal();
+        modalPicture[0].style.display = "none";
       });
-    });
+      outOfModal[0].addEventListener("click", function () {
+          closeModal();
+          modalPicture[0].style.display = "none";
+      });
+        
+      
+    }, 200);
   });
 });
 
@@ -261,7 +267,9 @@ function createModalPicture() {
   modalDivNewPicture.insertAdjacentHTML(
     "afterbegin",
     `<form enctype="multipart/form-data" method="post" name="sendwork">
-   <input type="file" name="workimage" id="form-img" required/><br />
+   <div id="label-file"> </div>
+   <input type="file" name="workimage" id="form-img" class="input-file" accept=".png, .jpg" max="4000000"required /><br />
+   <img id="preview" src="#" ">
    <label>Titre</label><br />
    <input type="text" name="worktitle" required id="form-title"/><br />
    <label>Catégorie</label><br />
@@ -272,6 +280,7 @@ function createModalPicture() {
       <option value="3">Hotels & restaurants</option>
     </select>
    </form>
+   
   `
   );
   aside.appendChild(modalDivNewPicture);
@@ -281,6 +290,7 @@ function createModalPicture() {
   let button = document.createElement("button");
   button.textContent = "Valider";
   button.className = "submit-work grey-button";
+  button.id ="submit-work";
   divButtonValider.appendChild(button);
   aside.appendChild(divButtonValider);
 
@@ -289,6 +299,7 @@ function createModalPicture() {
 
 let modalPictureGenerated = false;
 
+// CREER LA MODALE PROJET OU LA REOUVRE
 editWorks[0].addEventListener("click", function () {
   let newProject = document.getElementById("addPicture");
   newProject.addEventListener("click", function () {
@@ -336,9 +347,22 @@ function sendWork() {
     },
     body: data,
   })
-    .then((res) => res.json())
-    .then((log) => console.log(log));
-}
+  .then((res) => {
+    if (res.status !== 201) {
+      // Si le code d'état de la réponse n'est pas 201, cela signifie qu'une erreur a été renvoyée par l'API
+      alert("Erreur " + res.status + " : " + res.statusText);
+    } else {
+      // Si le code d'état est 201, on peut continuer à traiter les données
+      alert("Code 201: Created");
+      return res.json()
+    }
+  })
+  .then((log) => console.log(log))
+  .catch((error) => {
+    // Si une erreur est survenue lors de la requête, on l'affiche dans une alerte
+    alert(error);
+  })};
+
 
 // SI ON CLIQUE SUR LE BOUTON VALIDER PROJET ON APPELLE LA FONCTION SENDWORK
 editWorks[0].addEventListener("click", function () {
@@ -346,13 +370,69 @@ editWorks[0].addEventListener("click", function () {
 
   newProject.addEventListener("click", function () {
     setTimeout(function () {
-      let submitWork = document.getElementsByClassName("submit-work");
-
-      submitWork[0].addEventListener("click", function () {
-          sendWork();
+      const workimage = document.getElementById("form-img");
+      const worktitle = document.getElementById("form-title");
+      const workcategory = document.getElementById("form-category");
+      workimage.addEventListener("change", checkForm);
+      worktitle.addEventListener("change", checkForm);
+      workcategory.addEventListener("change", checkForm);
+      const submitWork = document.getElementsByClassName("submit-work");
+      
+      submitWork[0].addEventListener("click", function (event) {
+          sendWork()
+          event.stopPropagation;
         },
         200
       );
     });
   });
 });
+
+
+// VERIFIE LE FORMAT DE LA PHOTO ENVOYEE ET L'AFFICHE DANS LE FORMULAIRE
+editWorks[0].addEventListener("click", function () {
+  let newProject = document.getElementById("addPicture");
+
+  newProject.addEventListener("click", function () {
+    setTimeout(function () {
+      const input = document.getElementById("form-img");
+      const preview = document.getElementById("preview");
+      const maxSize = 4000000; // 4 Mo en octets
+      const backgroundFormImg = document.getElementById("form-img");
+      input.addEventListener("change", () => {
+        // Récupère le fichier sélectionné
+        const file = input.files[0];
+
+  // Vérifie que le fichier est une image png OU jpg OU jpeg ET de moins de 4 mo
+  if ((file.type.startsWith("image/png")|| file.type.startsWith("image/jpeg") || file.type.startsWith("image/jpg")) && (file.size< maxSize)) {
+    // Crée un lecteur de fichier pour lire l'image sélectionnée
+    const reader = new FileReader();
+
+    // Définit un gestionnaire d'événements pour l'événement "load" du lecteur de fichier
+    reader.addEventListener("load", () => {
+      // Affiche l'image dans l'élément img et le fait apparaître
+      preview.src = reader.result;
+      preview.style.display= "block";
+      backgroundFormImg.style.background= "#E8F1F7"; //remplace l'image de fond du formulaire par uniquement de la couleur
+    });
+
+    reader.readAsDataURL(file);
+  } else {
+    preview.src = "#";
+    alert("Veuillez sélectionner une image valide.");
+  }
+}, 200)})})});
+
+// FONCTION QUI CHANGE LA COULEUR DU BOUTON VALIDER QUAND LES CHAMPS DU FORMULAIRE SONT REMPLIS
+
+function checkForm() {
+      const workimage = document.getElementById("form-img");
+      const worktitle = document.getElementById("form-title");
+      const workcategory = document.getElementById("form-category");
+      const button = document.getElementById("submit-work");
+      if (workimage.value !="" && worktitle.value !="" && workcategory.value !=""){
+        button.style.backgroundColor= "#1D6154";
+      } else {
+        button.style.backgroundColor= "#A7A7A7";
+      }};
+      
