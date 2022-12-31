@@ -84,8 +84,8 @@ function editPage() {
     // augmentation de la margin bottom du titre suite à la suppression des filtres
     const portfolioTitle = document.querySelector("#portfolio h2");
     portfolioTitle.style.marginBottom = "80px";
-  }};
-
+  }
+}
 
 editPage(); //appel de la fonction editPage si l'admin est connecté
 
@@ -142,16 +142,15 @@ function createModal() {
         newFigure.appendChild(figCaption);
       }
     });
-  jsGalery.className ="js-galery"
+  jsGalery.className = "js-galery";
   aside.appendChild(jsGalery);
-
 
   let arrows = document.createElement("i");
   arrows.className = "fa-solid fa-arrows-up-down-left-right";
   aside.appendChild(arrows);
 
-  let divButton =document.createElement("div");
-  divButton.className ="div-button";
+  let divButton = document.createElement("div");
+  divButton.className = "div-button";
 
   let button = document.createElement("button");
   button.textContent = "Ajouter une photo";
@@ -206,10 +205,15 @@ editWorks[0].addEventListener("click", function () {
     closeModal();
   });
   // FERME LA MODALE PICTURE EN CLIQUANT SUR LA CROIX
-  closeModalTwo[0].addEventListener("click", function () {
-    closeModal();
-  })});
-
+  let newProject = document.getElementById("addPicture");
+  newProject.addEventListener("click", function () {
+    setTimeout(function () {
+      closeModalTwo[0].addEventListener("click", function () {
+        closeModal(), 150;
+      });
+    });
+  });
+});
 
 // SUPPRESSION D'UN TRAVAIL DE L'ARCHITECTE
 editWorks[0].addEventListener("click", function () {
@@ -228,8 +232,11 @@ editWorks[0].addEventListener("click", function () {
         document.querySelector(`[data-id="${trashbin.dataset.id}"`).remove(); //supprime le projet de façon dynamique sur la page du site
         trashbin.parentElement.remove(); //supprime le projet dans la modale
         alert("Item Deleted");
-      })}}, 500)});
- 
+      });
+    }
+  }, 500);
+});
+
 // AJOUT DE LA MODALE AJOUTER PROJET
 
 function createModalPicture() {
@@ -250,24 +257,27 @@ function createModalPicture() {
   aside.appendChild(title);
 
   let modalDivNewPicture = document.createElement("div");
-  modalDivNewPicture.className= "new-project"
-  modalDivNewPicture.insertAdjacentHTML("afterbegin",
-  `<form enctype="multipart/form-data" method="post" name="sendwork">
+  modalDivNewPicture.className = "new-project";
+  modalDivNewPicture.insertAdjacentHTML(
+    "afterbegin",
+    `<form enctype="multipart/form-data" method="post" name="sendwork">
    <input type="file" name="workimage" id="form-img" required/><br />
    <label>Titre</label><br />
    <input type="text" name="worktitle" required id="form-title"/><br />
    <label>Catégorie</label><br />
    <select name="workcategory" id="form-category" required>
+      <option value=""></option>
       <option value="1">Objets</option>
       <option value="2">Appartements</option>
       <option value="3">Hotels & restaurants</option>
     </select>
    </form>
-  `);
+  `
+  );
   aside.appendChild(modalDivNewPicture);
 
   let divButtonValider = document.createElement("div");
-  divButtonValider.className ="button-valider";
+  divButtonValider.className = "button-valider";
   let button = document.createElement("button");
   button.textContent = "Valider";
   button.className = "submit-work grey-button";
@@ -275,7 +285,6 @@ function createModalPicture() {
   aside.appendChild(divButtonValider);
 
   body[0].appendChild(aside);
-  
 }
 
 let modalPictureGenerated = false;
@@ -292,7 +301,9 @@ editWorks[0].addEventListener("click", function () {
       createModalPicture();
       // la modale est générée donc on retoune true pour ne pas multiplier la modale picture dans le code source
       modalPictureGenerated = true;
-    }})});
+    }
+  });
+});
 
 // RETOURNE SUR L'ANCIENNE MODALE SI ON CLIQUE SUR PRECEDENT
 editWorks[0].addEventListener("click", function () {
@@ -302,7 +313,9 @@ editWorks[0].addEventListener("click", function () {
     previously[0].addEventListener("click", function () {
       modalPicture[0].style.display = "none";
       modal[0].style.display = "block";
-    })})});
+    });
+  });
+});
 
 // ENVOYER UN NOUVEAU PROJET
 
@@ -311,35 +324,35 @@ function sendWork() {
   const worktitle = document.getElementById("form-title");
   const workcategory = document.getElementById("form-category");
   const data = new FormData();
-  data.append('image', workimage.value);
-  data.append('title', worktitle.value);
-  data.append('category', workcategory.value);
-  console.log(data)
+  data.append("image", workimage.files[0]);
+  data.append("title", worktitle.value);
+  data.append("category", workcategory.value);
+  console.log(workimage.value, worktitle.value, workcategory.value);
+  console.log(data);
   fetch("http://localhost:5678/api/works", {
     method: "POST",
     headers: {
-      Authorization: "Bearer " + sessionStorage.getItem("token")
+      Authorization: "Bearer " + sessionStorage.getItem("token"),
     },
-    body: data
+    body: data,
   })
-  .then((res) => res.json())
-  .then((log) => console.log(log))
-
-};
+    .then((res) => res.json())
+    .then((log) => console.log(log));
+}
 
 // SI ON CLIQUE SUR LE BOUTON VALIDER PROJET ON APPELLE LA FONCTION SENDWORK
 editWorks[0].addEventListener("click", function () {
   let newProject = document.getElementById("addPicture");
- 
+
   newProject.addEventListener("click", function () {
-    
     setTimeout(function () {
       let submitWork = document.getElementsByClassName("submit-work");
-      submitWork[0].addEventListener("click", function(){
-        sendWork();
-     
-  }, 200)
-})})});
 
-  
-
+      submitWork[0].addEventListener("click", function () {
+          sendWork();
+        },
+        200
+      );
+    });
+  });
+});

@@ -413,7 +413,7 @@ aside p {
 
 #form-title, #form-category {
 	width: 460px;
-	margin: 20px 0 20px -10px;
+	margin: 8px 0 18px -10px;
 }
 
 .div-button {
@@ -429,7 +429,7 @@ aside p {
 	width: 460px;
 	border-top: 1px solid #B3B3B3;
 	position: absolute;
-	top: 560px;
+	top: 545px;
 	left: 75px;
 	margin-left: 13px;
 }
