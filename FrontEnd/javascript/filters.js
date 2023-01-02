@@ -28,8 +28,9 @@ fetch("http://localhost:5678/api/works")
 
     for (let i = 0; i < newLi.length; i++) {
       newLi[i].addEventListener("click", function () {
-        gallery[0].innerHTML = ""; // on vide le contenu du HTML dès que l'on clique sur un filtre
-
+        while (gallery[0].firstChild) {
+          gallery[0].removeChild(gallery[0].firstChild); //supprime chaque figure de la galerie dès que l'on clique sur un filtre
+        }
         for (work of works) {
           //on ajoute uniquement au HTML les projets qui ont la bonne catégorie OU tous les projets si on clique sur TOUS
           if (
