@@ -36,6 +36,6 @@ fetch("http://localhost:5678/api/works")
             work.category.name === newLi[i].textContent ||
             newLi[i].textContent === "Tous"
           ) {
-            addWork();
+            addWork(work);
           }}})}});
         
