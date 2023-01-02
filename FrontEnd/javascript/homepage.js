@@ -3,11 +3,11 @@ fetch("http://localhost:5678/api/works")
   .then((works) => {
     // BOUCLE QUI CREE DE NOUVEAUX ELEMENTS SANS INNERHTML
     for (work of works) {
-      addWork();
+      addWork(work);
     }
   });
 
-function addWork() {
+function addWork(work) {
   const gallery = document.getElementsByClassName("gallery");
   let newFigure = document.createElement("figure");
   //ne pas oublier le [0] car il s'agit d'une classe et il faut donc sélectionner quelque chose
@@ -88,31 +88,29 @@ function editPage() {
 }
 
 editPage(); //appel de la fonction editPage si l'admin est connecté
-function addPicture () {
-
+function addPicture(work) {
   const galeryImg = document.getElementsByClassName("js-galery");
-const newFigure = document.createElement("figure");
-        newFigure.setAttribute("data-id", work.id);
+  const newFigure = document.createElement("figure");
+  newFigure.setAttribute("data-id", work.id);
 
-        let img = document.createElement("img");
-        img.setAttribute("crossorigin", "anonymous");
-        img.setAttribute("src", work.imageUrl);
-        img.setAttribute("alt", work.title);
+  let img = document.createElement("img");
+  img.setAttribute("crossorigin", "anonymous");
+  img.setAttribute("src", work.imageUrl);
+  img.setAttribute("alt", work.title);
 
-        let figCaption = document.createElement("figcaption");
-        figCaption.textContent = "éditer";
+  let figCaption = document.createElement("figcaption");
+  figCaption.textContent = "éditer";
 
-        let trashbin = document.createElement("i");
-        trashbin.className = "fa-solid fa-trash-can";
-        trashbin.setAttribute("data-id", work.id);
+  let trashbin = document.createElement("i");
+  trashbin.className = "fa-solid fa-trash-can";
+  trashbin.setAttribute("data-id", work.id);
 
-        newFigure.appendChild(img);
-        newFigure.appendChild(trashbin);
-        newFigure.appendChild(figCaption); 
+  newFigure.appendChild(img);
+  newFigure.appendChild(trashbin);
+  newFigure.appendChild(figCaption);
 
-        galeryImg[0].appendChild(newFigure);
-       
-};
+  galeryImg[0].appendChild(newFigure);
+}
 // FONCTION QUI PERMET DE FAIRE APPARAITRE LA MODALE POUR MODIFIER LES PROJETS
 
 const body = document.getElementsByTagName("body");
@@ -145,10 +143,10 @@ function createModal() {
     .then((res) => res.json())
     .then((works) => {
       for (work of works) {
-        addPicture();
+        addPicture(work);
       }
     });
- 
+
   aside.appendChild(jsGalery);
 
   let arrows = document.createElement("i");
@@ -343,49 +341,50 @@ function sendWork() {
     },
     body: data,
   })
-  .then((res) => {
-    if (res.ok) {
-      alert("Code 201: Created");
-      addNewWork(); //appelle la fonction qui ajoute le projet dans la gallerie
+    .then((res) => {
+      if (res.ok) {
+        alert("Code 201: Created");
+        return res.json();
+      } else {
+        throw new Error(res.statusText);
+      }
+    })
+    .then((data) => {
+      console.log(data);
+      // Traitement des données renvoyées par l'API
+      addNewWork();
       modalPicture[0].style.display = "none"; //passe sur la première modale pour voir le projet s'ajouter
       modal[0].style.display = "block";
-      addNewElement();//appelle la fonction qui ajoute le projet dans la mdoale
-      return res.json();
-      
-    } else {
-      throw new Error(res.statusText);
-    }
-  })
-  .then((data) => {
-    console.log(data);
-    // Traitement des données renvoyées par l'API
-  })
-  .catch((error) => {
-    alert(error);
-  })};
+      addNewElement();
+    })
+    .catch((error) => {
+      alert(error);
+    });
+}
 
-  // FONCTION QUI PERMET DAJOUTER LE DERNIER PROJET DANS LA GALLERIE
-  function addNewWork() {
-    fetch("http://localhost:5678/api/works")
-  .then((res) => res.json())
-  .then((works) => {
-    const work = works[works.length - 1];
+// FONCTION QUI PERMET DAJOUTER LE DERNIER PROJET DANS LA GALLERIE
+function addNewWork() {
+  fetch("http://localhost:5678/api/works")
+    .then((res) => res.json())
+    .then((works) => {
+      const work = works[works.length - 1];
       if (work) {
-      addWork();
-    }
-  })};
+        addWork(work);
+      }
+    });
+}
 
 // FONCTION QUI PERMET DAJOUTER LE DERNIER PROJET DANS LA GALERIE DE LA MODALE
 function addNewElement() {
-    fetch("http://localhost:5678/api/works")
-      .then((res) => res.json())
-      .then((works) => {
-        const work = works[works.length - 1];
-        if (work) {
-          addPicture();
-        } 
-      })};
-   
+  fetch("http://localhost:5678/api/works")
+    .then((res) => res.json())
+    .then((works) => {
+      const work = works[works.length - 1];
+      if (work) {
+        addPicture(work);
+      }
+    });
+}
 
 // FONCTION QUI CHANGE LA COULEUR DU BOUTON VALIDER QUAND LES CHAMPS DU FORMULAIRE SONT REMPLIS
 
@@ -420,11 +419,13 @@ document.addEventListener("click", function (event) {
 //Quand on clique sur valider on appelle la fonction sendwork pour ajouter le nouveau projet
 document.addEventListener("click", function (event) {
   const button = document.getElementById("submit-work");
-  if (event.target.matches("#submit-work") && button.style.backgroundColor != "#A7A7A7") {
+  if (
+    event.target.matches("#submit-work") &&
+    button.style.backgroundColor != "#A7A7A7"
+  ) {
     sendWork();
     event.stopPropagation();
     event.preventDefault();
-    
   }
 });
 
@@ -462,4 +463,4 @@ document.addEventListener("click", function (event) {
       }
     });
   }
-})
+});
