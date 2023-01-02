@@ -88,7 +88,31 @@ function editPage() {
 }
 
 editPage(); //appel de la fonction editPage si l'admin est connecté
+function addPicture () {
 
+  const galeryImg = document.getElementsByClassName("js-galery");
+const newFigure = document.createElement("figure");
+        newFigure.setAttribute("data-id", work.id);
+
+        let img = document.createElement("img");
+        img.setAttribute("crossorigin", "anonymous");
+        img.setAttribute("src", work.imageUrl);
+        img.setAttribute("alt", work.title);
+
+        let figCaption = document.createElement("figcaption");
+        figCaption.textContent = "éditer";
+
+        let trashbin = document.createElement("i");
+        trashbin.className = "fa-solid fa-trash-can";
+        trashbin.setAttribute("data-id", work.id);
+
+        newFigure.appendChild(img);
+        newFigure.appendChild(trashbin);
+        newFigure.appendChild(figCaption); 
+
+        galeryImg[0].appendChild(newFigure);
+       
+};
 // FONCTION QUI PERMET DE FAIRE APPARAITRE LA MODALE POUR MODIFIER LES PROJETS
 
 const body = document.getElementsByTagName("body");
@@ -116,33 +140,15 @@ function createModal() {
 
   // requête à l'api pour récupérer les images des projets
   let jsGalery = document.createElement("div");
+  jsGalery.className = "js-galery";
   fetch("http://localhost:5678/api/works")
     .then((res) => res.json())
     .then((works) => {
       for (work of works) {
-        let newFigure = document.createElement("figure");
-        newFigure.setAttribute("data-id", work.id);
-
-        jsGalery.appendChild(newFigure);
-
-        let img = document.createElement("img");
-        img.setAttribute("crossorigin", "anonymous");
-        img.setAttribute("src", work.imageUrl);
-        img.setAttribute("alt", work.title);
-
-        let figCaption = document.createElement("figcaption");
-        figCaption.textContent = "éditer";
-
-        let trashbin = document.createElement("i");
-        trashbin.className = "fa-solid fa-trash-can";
-        trashbin.setAttribute("data-id", work.id);
-
-        newFigure.appendChild(img);
-        newFigure.appendChild(trashbin);
-        newFigure.appendChild(figCaption);
+        addPicture();
       }
     });
-  jsGalery.className = "js-galery";
+ 
   aside.appendChild(jsGalery);
 
   let arrows = document.createElement("i");
@@ -167,18 +173,20 @@ function createModal() {
 }
 
 // si on clique sur le bouton Modifier des projets
-editWorks[0].addEventListener("click", function () {
-  // si la modale existe déjà mais était cachée
-  if (modalGenerated === true) {
-    modal[0].style.display = "block";
-    outOfModal[0].style.display = "block";
+document.addEventListener("click", function (event) {
+  if (event.target.matches(".modify-works")) {
+    // si la modale existe déjà mais était cachée
+    if (modalGenerated === true) {
+      modal[0].style.display = "block";
+      outOfModal[0].style.display = "block";
 
-    // si la modale (et le background) n'existent pas encore on les créée
-  } else if (modalGenerated === false) {
-    createBackground();
-    createModal();
-    // la modale est générée donc on retourne true pour ne pas multiplier la modale dans le code source
-    modalGenerated = true;
+      // si la modale (et le background) n'existent pas encore on les créée
+    } else if (modalGenerated === false) {
+      createBackground();
+      createModal();
+      // la modale est générée donc on retourne true pour ne pas multiplier la modale dans le code source
+      modalGenerated = true;
+    }
   }
 });
 
@@ -193,54 +201,48 @@ function closeModal() {
   outOfModal[0].style.display = "none";
 }
 
-editWorks[0].addEventListener("click", function () {
-  // FERME LA MODALE EN CLIQUANT EN DEHORS DE LA MODALE VIA LE BACKGROUND GRIS
-  outOfModal[0].addEventListener("click", function () {
+// FERME LA MODALE EN CLIQUANT SUR LA CROIX
+document.addEventListener("click", function (event) {
+  if (event.target.matches(".fa-xmark")) {
     closeModal();
-  });
-
-  // FERME LA MODALE EN CLIQUANT SUR LA CROIX
-  crossModal[0].addEventListener("click", function () {
+  }
+});
+// FERME LA MODALE PICTURE EN CLIQUANT SUR LA CROIX
+document.addEventListener("click", function (event) {
+  if (event.target.matches(".close-modale-picture")) {
     closeModal();
-  });
-  // FERME LA MODALE PICTURE EN CLIQUANT SUR LA CROIX
-  let newProject = document.getElementById("addPicture");
-  newProject.addEventListener("click", function () {
-    setTimeout(function () {
-      closeModalTwo[0].addEventListener("click", function () {
-        closeModal();
-        modalPicture[0].style.display = "none";
-      });
-      outOfModal[0].addEventListener("click", function () {
-          closeModal();
-          modalPicture[0].style.display = "none";
-      });
-        
-      
-    }, 200);
-  });
+    modalPicture[0].style.display = "none";
+  }
+});
+// FERME LA MODALE EN CLIQUANT EN DEHORS DE LA MODALE VIA LE BACKGROUND GRIS
+document.addEventListener("click", function (event) {
+  if (event.target.matches(".js-modal-background")) {
+    if (modal[0].style.display != "none") {
+      closeModal();
+    } else {
+      modalPicture[0].style.display = "none";
+      closeModal();
+    }
+  }
 });
 
 // SUPPRESSION D'UN TRAVAIL DE L'ARCHITECTE
-editWorks[0].addEventListener("click", function () {
-  setTimeout(function () {
-    const trashbins = document.getElementsByClassName("fa-trash-can");
-    for (let trashbin of trashbins) {
-      trashbin.addEventListener("click", function () {
-        const fetchUrl =
-          "http://localhost:5678/api/works/" + trashbin.dataset.id;
-        fetch(fetchUrl, {
-          method: "DELETE",
-          headers: {
-            Authorization: "Bearer " + sessionStorage.getItem("token"),
-          },
-        });
-        document.querySelector(`[data-id="${trashbin.dataset.id}"`).remove(); //supprime le projet de façon dynamique sur la page du site
-        trashbin.parentElement.remove(); //supprime le projet dans la modale
-        alert("Item Deleted");
+document.addEventListener("click", function (event) {
+  const trashbins = document.getElementsByClassName("fa-trash-can");
+  for (let trashbin of trashbins) {
+    if (event.target === trashbin) {
+      const fetchUrl = "http://localhost:5678/api/works/" + trashbin.dataset.id;
+      fetch(fetchUrl, {
+        method: "DELETE",
+        headers: {
+          Authorization: "Bearer " + sessionStorage.getItem("token"),
+        },
       });
+      document.querySelector(`[data-id="${trashbin.dataset.id}"`).remove(); //supprime le projet de façon dynamique sur la page du site
+      trashbin.parentElement.remove(); //supprime le projet dans la modale
+      alert("Item Deleted");
     }
-  }, 500);
+  }
 });
 
 // AJOUT DE LA MODALE AJOUTER PROJET
@@ -290,7 +292,7 @@ function createModalPicture() {
   let button = document.createElement("button");
   button.textContent = "Valider";
   button.className = "submit-work grey-button";
-  button.id ="submit-work";
+  button.id = "submit-work";
   divButtonValider.appendChild(button);
   aside.appendChild(divButtonValider);
 
@@ -299,12 +301,10 @@ function createModalPicture() {
 
 let modalPictureGenerated = false;
 
-// CREER LA MODALE PROJET OU LA REOUVRE
-editWorks[0].addEventListener("click", function () {
-  let newProject = document.getElementById("addPicture");
-  newProject.addEventListener("click", function () {
+// CREER LA MODALE PROJET OU LA REOUVRIR
+document.addEventListener("click", function (event) {
+  if (event.target.matches("#addPicture")) {
     modal[0].style.display = "none"; // ferme la modale car on fait apparaître la modale picture
-
     if (modalPictureGenerated === true) {
       modalPicture[0].style.display = "block"; //on refait apparaître la modale picture si elle existe déjà
     } else if (modalPictureGenerated === false) {
@@ -313,19 +313,15 @@ editWorks[0].addEventListener("click", function () {
       // la modale est générée donc on retoune true pour ne pas multiplier la modale picture dans le code source
       modalPictureGenerated = true;
     }
-  });
+  }
 });
 
 // RETOURNE SUR L'ANCIENNE MODALE SI ON CLIQUE SUR PRECEDENT
-editWorks[0].addEventListener("click", function () {
-  let newProject = document.getElementById("addPicture");
-  newProject.addEventListener("click", function () {
-    let previously = document.getElementsByClassName("fa-arrow-left");
-    previously[0].addEventListener("click", function () {
-      modalPicture[0].style.display = "none";
-      modal[0].style.display = "block";
-    });
-  });
+document.addEventListener("click", function (event) {
+  if (event.target.matches(".fa-arrow-left")) {
+    modalPicture[0].style.display = "none";
+    modal[0].style.display = "block";
+  }
 });
 
 // ENVOYER UN NOUVEAU PROJET
@@ -348,91 +344,122 @@ function sendWork() {
     body: data,
   })
   .then((res) => {
-    if (res.status !== 201) {
-      // Si le code d'état de la réponse n'est pas 201, cela signifie qu'une erreur a été renvoyée par l'API
-      alert("Erreur " + res.status + " : " + res.statusText);
-    } else {
-      // Si le code d'état est 201, on peut continuer à traiter les données
+    if (res.ok) {
       alert("Code 201: Created");
-      return res.json()
+      addNewWork(); //appelle la fonction qui ajoute le projet dans la gallerie
+      modalPicture[0].style.display = "none"; //passe sur la première modale pour voir le projet s'ajouter
+      modal[0].style.display = "block";
+      addNewElement();//appelle la fonction qui ajoute le projet dans la mdoale
+      return res.json();
+      
+    } else {
+      throw new Error(res.statusText);
     }
   })
-  .then((log) => console.log(log))
+  .then((data) => {
+    console.log(data);
+    // Traitement des données renvoyées par l'API
+  })
   .catch((error) => {
-    // Si une erreur est survenue lors de la requête, on l'affiche dans une alerte
     alert(error);
   })};
 
+  // FONCTION QUI PERMET DAJOUTER LE DERNIER PROJET DANS LA GALLERIE
+  function addNewWork() {
+    fetch("http://localhost:5678/api/works")
+  .then((res) => res.json())
+  .then((works) => {
+    const work = works[works.length - 1];
+      if (work) {
+      addWork();
+    }
+  })};
 
-// SI ON CLIQUE SUR LE BOUTON VALIDER PROJET ON APPELLE LA FONCTION SENDWORK
-editWorks[0].addEventListener("click", function () {
-  let newProject = document.getElementById("addPicture");
-
-  newProject.addEventListener("click", function () {
-    setTimeout(function () {
-      const workimage = document.getElementById("form-img");
-      const worktitle = document.getElementById("form-title");
-      const workcategory = document.getElementById("form-category");
-      workimage.addEventListener("change", checkForm);
-      worktitle.addEventListener("change", checkForm);
-      workcategory.addEventListener("change", checkForm);
-      const submitWork = document.getElementsByClassName("submit-work");
-      
-      submitWork[0].addEventListener("click", function (event) {
-          sendWork()
-          event.stopPropagation;
-        },
-        200
-      );
-    });
-  });
-});
-
-
-// VERIFIE LE FORMAT DE LA PHOTO ENVOYEE ET L'AFFICHE DANS LE FORMULAIRE
-editWorks[0].addEventListener("click", function () {
-  let newProject = document.getElementById("addPicture");
-
-  newProject.addEventListener("click", function () {
-    setTimeout(function () {
-      const input = document.getElementById("form-img");
-      const preview = document.getElementById("preview");
-      const maxSize = 4000000; // 4 Mo en octets
-      const backgroundFormImg = document.getElementById("form-img");
-      input.addEventListener("change", () => {
-        // Récupère le fichier sélectionné
-        const file = input.files[0];
-
-  // Vérifie que le fichier est une image png OU jpg OU jpeg ET de moins de 4 mo
-  if ((file.type.startsWith("image/png")|| file.type.startsWith("image/jpeg") || file.type.startsWith("image/jpg")) && (file.size< maxSize)) {
-    // Crée un lecteur de fichier pour lire l'image sélectionnée
-    const reader = new FileReader();
-
-    // Définit un gestionnaire d'événements pour l'événement "load" du lecteur de fichier
-    reader.addEventListener("load", () => {
-      // Affiche l'image dans l'élément img et le fait apparaître
-      preview.src = reader.result;
-      preview.style.display= "block";
-      backgroundFormImg.style.background= "#E8F1F7"; //remplace l'image de fond du formulaire par uniquement de la couleur
-    });
-
-    reader.readAsDataURL(file);
-  } else {
-    preview.src = "#";
-    alert("Veuillez sélectionner une image valide.");
-  }
-}, 200)})})});
+// FONCTION QUI PERMET DAJOUTER LE DERNIER PROJET DANS LA GALERIE DE LA MODALE
+function addNewElement() {
+    fetch("http://localhost:5678/api/works")
+      .then((res) => res.json())
+      .then((works) => {
+        const work = works[works.length - 1];
+        if (work) {
+          addPicture();
+        } 
+      })};
+   
 
 // FONCTION QUI CHANGE LA COULEUR DU BOUTON VALIDER QUAND LES CHAMPS DU FORMULAIRE SONT REMPLIS
 
 function checkForm() {
-      const workimage = document.getElementById("form-img");
-      const worktitle = document.getElementById("form-title");
-      const workcategory = document.getElementById("form-category");
-      const button = document.getElementById("submit-work");
-      if (workimage.value !="" && worktitle.value !="" && workcategory.value !=""){
-        button.style.backgroundColor= "#1D6154";
+  const workimage = document.getElementById("form-img");
+  const worktitle = document.getElementById("form-title");
+  const workcategory = document.getElementById("form-category");
+  const button = document.getElementById("submit-work");
+  if (
+    workimage.value != "" &&
+    worktitle.value != "" &&
+    workcategory.value != ""
+  ) {
+    button.style.backgroundColor = "#1D6154";
+  } else {
+    button.style.backgroundColor = "#A7A7A7";
+  }
+}
+
+// Quand on rempli le formulaire, on vérifie quand chaque champ change si tout les champs sont remplis, le bouton valider devient vert
+document.addEventListener("click", function (event) {
+  if (event.target.matches("#addPicture")) {
+    const workimage = document.getElementById("form-img");
+    const worktitle = document.getElementById("form-title");
+    const workcategory = document.getElementById("form-category");
+    workimage.addEventListener("change", checkForm);
+    worktitle.addEventListener("change", checkForm);
+    workcategory.addEventListener("change", checkForm);
+  }
+});
+
+//Quand on clique sur valider on appelle la fonction sendwork pour ajouter le nouveau projet
+document.addEventListener("click", function (event) {
+  const button = document.getElementById("submit-work");
+  if (event.target.matches("#submit-work") && button.style.backgroundColor != "#A7A7A7") {
+    sendWork();
+    event.stopPropagation();
+    event.preventDefault();
+    
+  }
+});
+
+// VERIFIE LE FORMAT DE LA PHOTO ENVOYEE ET L'AFFICHE DANS LE FORMULAIRE
+document.addEventListener("click", function (event) {
+  if (event.target.matches("#addPicture")) {
+    const input = document.getElementById("form-img");
+    const preview = document.getElementById("preview");
+    const maxSize = 4000000; // 4 Mo en octets
+    const backgroundFormImg = document.getElementById("form-img");
+    input.addEventListener("change", () => {
+      // Récupère le fichier sélectionné
+      const file = input.files[0];
+      // Vérifie que le fichier est une image png OU jpg OU jpeg ET de moins de 4 mo
+      if (
+        (file.type.startsWith("image/png") ||
+          file.type.startsWith("image/jpeg") ||
+          file.type.startsWith("image/jpg")) &&
+        file.size < maxSize
+      ) {
+        // Crée un lecteur de fichier pour lire l'image sélectionnée
+        const reader = new FileReader();
+
+        // Définit un gestionnaire d'événements pour l'événement "load" du lecteur de fichier
+        reader.addEventListener("load", () => {
+          // Affiche l'image dans l'élément img et le fait apparaître
+          preview.src = reader.result;
+          preview.style.display = "block";
+          backgroundFormImg.style.background = "#E8F1F7"; //remplace l'image de fond du formulaire par uniquement de la couleur
+        });
+        reader.readAsDataURL(file);
       } else {
-        button.style.backgroundColor= "#A7A7A7";
-      }};
-      
+        preview.src = "#";
+        alert("Veuillez sélectionner une image valide.");
+      }
+    });
+  }
+})
