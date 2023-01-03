@@ -243,7 +243,11 @@ document.addEventListener("click", function (event) {
       document.querySelector(`[data-id="${trashbin.dataset.id}"`).remove(); //supprime le projet de façon dynamique sur la page du site
       trashbin.parentElement.remove(); //supprime le projet dans la modale
       alert("Item Deleted");
-    }
+      const arrows = document.getElementsByClassName("fa-arrows-up-down-left-right");
+      const jsGalery = document.getElementsByClassName("js-galery");
+      if (!jsGalery[0].firstChild) {
+      arrows[0].style.display ="none";
+    }}
   }
 }});
 
@@ -270,7 +274,7 @@ function createModalPicture() {
   modalDivNewPicture.className = "new-project";
   modalDivNewPicture.insertAdjacentHTML(
     "afterbegin",
-    `<form enctype="multipart/form-data" method="post" name="sendwork">
+    `<form id ="form-modal" enctype="multipart/form-data" method="post" name="sendwork">
    <div id="label-file"> </div>
    <input type="file" name="workimage" id="form-img" class="input-file" accept=".png, .jpg" max="4000000"required /><br />
    <img id="preview" src="#" ">
@@ -357,7 +361,10 @@ function sendWork() {
       modalPicture[0].style.display = "none"; //passe sur la première modale pour voir le projet s'ajouter
       modal[0].style.display = "block";
       addNewElement(); //ajoute le projet dans la liste d'image de la modale
+      const arrows = document.getElementsByClassName("fa-arrows-up-down-left-right");
+      arrows[0].style.display ="block";
     })
+    
     .catch((error) => {
       alert(error);
     });
@@ -469,6 +476,9 @@ document.addEventListener("click", function (event) {
       } else {
         preview.src = "#";
         alert("Veuillez sélectionner une image valide.");
+        const form = document.getElementById("form-modal");
+        form.reset();
+        
       }
     });
   }
