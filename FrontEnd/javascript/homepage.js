@@ -32,7 +32,7 @@ const login = lis[2];
 
 login.addEventListener("click", function () {
   if (login.textContent === "login") {
-    window.location.href = "login.html";// renvoie à la page login si le texte est login
+    window.location.href = "login.html"; // renvoie à la page login si le texte est login
   } else {
     sessionStorage.removeItem("token");
     window.location.href = "index.html"; //si le texte n'est pas login (donc logout) renvoie à l'index, supprime le token et recharge la page, on sera donc déconnecté
@@ -88,7 +88,6 @@ function editPage() {
 }
 
 editPage(); //appel de la fonction editPage si l'admin est connecté
-
 
 function addPicture(work) {
   const galeryImg = document.getElementsByClassName("js-galery");
@@ -232,11 +231,13 @@ document.addEventListener("click", function (event) {
   const trashbins = document.getElementsByClassName("fa-trash-can");
   for (let trashbin of trashbins) {
     if (event.target === trashbin) {
-      const fetchUrl = "http://localhost:5678/api/works/" + trashbin.dataset.id;
-      fetch(fetchUrl, {
-        method: "DELETE",
-        headers: {
-          Authorization: "Bearer " + sessionStorage.getItem("token"),
+      const confirmDeletion = confirm("Voulez-vous vraiment supprimer cet item ?");
+      if (confirmDeletion) {
+        const fetchUrl = "http://localhost:5678/api/works/" + trashbin.dataset.id;
+        fetch(fetchUrl, {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + sessionStorage.getItem("token"),
         },
       });
       document.querySelector(`[data-id="${trashbin.dataset.id}"`).remove(); //supprime le projet de façon dynamique sur la page du site
@@ -244,7 +245,7 @@ document.addEventListener("click", function (event) {
       alert("Item Deleted");
     }
   }
-});
+}});
 
 // AJOUT DE LA MODALE AJOUTER PROJET
 
@@ -282,9 +283,7 @@ function createModalPicture() {
       <option value="2">Appartements</option>
       <option value="3">Hotels & restaurants</option>
     </select>
-   </form>
-   
-  `
+   </form>`
   );
   aside.appendChild(modalDivNewPicture);
 
@@ -335,7 +334,7 @@ function sendWork() {
   data.append("image", workimage.files[0]);
   data.append("title", worktitle.value);
   data.append("category", workcategory.value);
-  
+
   fetch("http://localhost:5678/api/works", {
     method: "POST",
     headers: {
@@ -354,17 +353,17 @@ function sendWork() {
     .then((data) => {
       console.log(data);
       // Traitement des données renvoyées par l'API
-      addNewWork();//ajoute le projet dans la galerie
+      addNewWork(); //ajoute le projet dans la galerie
       modalPicture[0].style.display = "none"; //passe sur la première modale pour voir le projet s'ajouter
       modal[0].style.display = "block";
-      addNewElement();//ajoute le projet dans la liste d'image de la modale
+      addNewElement(); //ajoute le projet dans la liste d'image de la modale
     })
     .catch((error) => {
       alert(error);
     });
 }
 
-// FONCTION QUI PERMET DAJOUTER LE DERNIER PROJET DANS LA GALLERIE
+// FONCTION QUI PERMET DAJOUTER LE DERNIER PROJET DANS LA GALERIE
 function addNewWork() {
   fetch("http://localhost:5678/api/works")
     .then((res) => res.json())
@@ -396,7 +395,7 @@ function checkForm() {
   const workcategory = document.getElementById("form-category");
   const button = document.getElementById("submit-work");
   if (
-    workimage.value != "" && //si TOUS les champs ne contiennent pas du vide
+    workimage.files.length != 0 && //si TOUS les champs ne contiennent pas du vide
     worktitle.value != "" &&
     workcategory.value != ""
   ) {
@@ -412,7 +411,7 @@ document.addEventListener("click", function (event) {
     const workimage = document.getElementById("form-img");
     const worktitle = document.getElementById("form-title");
     const workcategory = document.getElementById("form-category");
-    workimage.addEventListener("change", checkForm); //appelle la fonction qui change la couleur du bouton dèq u'un changement est detecté dans chaque champ
+    workimage.addEventListener("change", checkForm); //appelle la fonction qui change la couleur du bouton dès qu'un changement est detecté dans chaque champ
     worktitle.addEventListener("change", checkForm);
     workcategory.addEventListener("change", checkForm);
   }
@@ -420,11 +419,19 @@ document.addEventListener("click", function (event) {
 
 //Quand on clique sur valider on appelle la fonction sendwork pour ajouter le nouveau projet
 document.addEventListener("click", function (event) {
-  const button = document.getElementById("submit-work");
-  if (
-    event.target.matches("#submit-work") && //si on clique sur valider ET que le bouton n'est pas gris
-    button.style.backgroundColor != "#A7A7A7"
-  ) {
+  if (event.target.matches("#submit-work")) {
+    const workimage = document.getElementById("form-img");
+    const worktitle = document.getElementById("form-title");
+    const workcategory = document.getElementById("form-category");
+    if (
+      workimage.files.length == 0 ||
+      worktitle.value == "" ||
+      workcategory.value == ""
+    ) {
+      // on vérifie que tous les champs soient remplis
+      alert("Veuillez remplir tous les champs du formulaire");
+      return;
+    }
     sendWork(); //on appelle la fonction qui envoie le projet à l'api
     event.stopPropagation();
     event.preventDefault();

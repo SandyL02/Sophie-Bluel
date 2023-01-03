@@ -30,13 +30,30 @@ submit.addEventListener("click", function (event) {
     },
     body: JSON.stringify(user),
   })
-    .then((res) => res.json())
-    .then((loginInfos) => {
-      if (loginInfos.token) {
-        sessionStorage.setItem("token", loginInfos.token); // on stocke le token dans la sessionStorage
-        window.location.href = "index.html"; // puis on redirige vers la page principale
-      } else {
-        alert("Erreur dans l’identifiant ou le mot de passe"); // erreur 401 ou 404 ( non autorisé ou utilisateur non trouvé)
-      }
-    });
+  .then((res) => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      throw new Error(res.statusText);
+    }
+  })
+  .then((loginInfos) => {
+    if (loginInfos.token) {
+      sessionStorage.setItem("token", loginInfos.token); // on stocke le token dans la sessionStorage
+      window.location.href = "index.html"; // puis on redirige vers la page principale
+    } else {
+      throw new Error("Invalid response from server");
+    }
+  })
+  .catch((error) => {
+    if (error.message == "Unauthorized" || error.message == "Not Found") {
+      alert("Erreur dans l’identifiant ou le mot de passe");
+    } else {
+      alert("Erreur inconnue : " + error.message);
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+    alert("Erreur de réseau ou délai d'expiration de la requête");
+  });
 });

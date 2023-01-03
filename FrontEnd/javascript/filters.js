@@ -16,8 +16,8 @@ fetch("http://localhost:5678/api/categories")
       let newLi = document.createElement("li");
       newLi.textContent = category.name;
       filters.appendChild(newLi);
-    }});
-
+    }
+  });
 
 //on veut maintenant rendre ces filtres fonctionnels donc on change d'api pour récupérer le backend des projets
 fetch("http://localhost:5678/api/works")
@@ -28,6 +28,15 @@ fetch("http://localhost:5678/api/works")
 
     for (let i = 0; i < newLi.length; i++) {
       newLi[i].addEventListener("click", function () {
+        // on réinitialise tous les boutons avant de mettre à jour la couleur du bouton actif
+        for (let j = 0; j < newLi.length; j++) {
+          newLi[j].style.backgroundColor = "";
+          newLi[j].style.color = "";
+        }
+        // on met à jour la couleur du bouton actif
+        newLi[i].style.backgroundColor = "#1D6154";
+        newLi[i].style.color = "white";
+
         while (gallery[0].firstChild) {
           gallery[0].removeChild(gallery[0].firstChild); //supprime chaque figure de la galerie dès que l'on clique sur un filtre
         }
@@ -38,5 +47,8 @@ fetch("http://localhost:5678/api/works")
             newLi[i].textContent === "Tous"
           ) {
             addWork(work);
-          }}})}});
-        
+          }
+        }
+      });
+    }
+  });
