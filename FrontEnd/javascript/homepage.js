@@ -79,7 +79,7 @@ function editPage() {
     setTimeout(function () {
       const ulfilters = document.getElementById("ulfilters");
       ulfilters.style.display = "none";
-    }, 150);
+    }, 200);
 
     // augmentation de la margin bottom du titre suite à la suppression des filtres
     const portfolioTitle = document.querySelector("#portfolio h2");
@@ -231,25 +231,32 @@ document.addEventListener("click", function (event) {
   const trashbins = document.getElementsByClassName("fa-trash-can");
   for (let trashbin of trashbins) {
     if (event.target === trashbin) {
-      const confirmDeletion = confirm("Voulez-vous vraiment supprimer cet item ?");
+      const confirmDeletion = confirm(
+        "Voulez-vous vraiment supprimer ce projet ?"
+      );
       if (confirmDeletion) {
-        const fetchUrl = "http://localhost:5678/api/works/" + trashbin.dataset.id;
+        const fetchUrl =
+          "http://localhost:5678/api/works/" + trashbin.dataset.id;
         fetch(fetchUrl, {
           method: "DELETE",
           headers: {
             Authorization: "Bearer " + sessionStorage.getItem("token"),
-        },
-      });
-      document.querySelector(`[data-id="${trashbin.dataset.id}"`).remove(); //supprime le projet de façon dynamique sur la page du site
-      trashbin.parentElement.remove(); //supprime le projet dans la modale
-      alert("Item Deleted");
-      const arrows = document.getElementsByClassName("fa-arrows-up-down-left-right");
-      const jsGalery = document.getElementsByClassName("js-galery");
-      if (!jsGalery[0].firstChild) {
-      arrows[0].style.display ="none";
-    }}
+          },
+        });
+        document.querySelector(`[data-id="${trashbin.dataset.id}"`).remove(); //supprime le projet de façon dynamique sur la page du site
+        trashbin.parentElement.remove(); //supprime le projet dans la modale
+        alert("Projet supprimé !");
+        const arrows = document.getElementsByClassName(
+          "fa-arrows-up-down-left-right"
+        );
+        const jsGalery = document.getElementsByClassName("js-galery");
+        if (!jsGalery[0].firstChild) {
+          arrows[0].style.display = "none"; // si le dernier projet de la galerie est supprimé, les flèches sont cachées
+        }
+      }
+    }
   }
-}});
+});
 
 // AJOUT DE LA MODALE AJOUTER PROJET
 
@@ -275,19 +282,25 @@ function createModalPicture() {
   modalDivNewPicture.insertAdjacentHTML(
     "afterbegin",
     `<form id ="form-modal" enctype="multipart/form-data" method="post" name="sendwork">
-   <div id="label-file"> </div>
-   <input type="file" name="workimage" id="form-img" class="input-file" accept=".png, .jpg" max="4000000"required /><br />
-   <img id="preview" src="#" ">
-   <label>Titre</label><br />
-   <input type="text" name="worktitle" required id="form-title"/><br />
-   <label>Catégorie</label><br />
-   <select name="workcategory" id="form-category" required>
-      <option value=""></option>
-      <option value="1">Objets</option>
-      <option value="2">Appartements</option>
-      <option value="3">Hotels & restaurants</option>
-    </select>
-   </form>`
+      <div id="file-label">
+        <label for="form-img">
+          <i class="fa-regular fa-image"></i>
+          <div id="button-label">+ Ajouter photo</div>
+          <p>jpg, png : 4mo max</p>
+          <input type="file" name="workimage" id="form-img" class="input-file" accept=".png, .jpg" max="4000000" required /><br />
+        </label>
+      </div>
+      <img id="preview" src="#" ">
+      <label>Titre</label><br />
+      <input type="text" name="worktitle" required id="form-title"/><br />
+      <label>Catégorie</label><br />
+      <select name="workcategory" id="form-category" required>
+          <option value=""></option>
+          <option value="1">Objets</option>
+          <option value="2">Appartements</option>
+          <option value="3">Hotels & restaurants</option>
+        </select>
+    </form>`
   );
   aside.appendChild(modalDivNewPicture);
 
@@ -361,10 +374,12 @@ function sendWork() {
       modalPicture[0].style.display = "none"; //passe sur la première modale pour voir le projet s'ajouter
       modal[0].style.display = "block";
       addNewElement(); //ajoute le projet dans la liste d'image de la modale
-      const arrows = document.getElementsByClassName("fa-arrows-up-down-left-right");
-      arrows[0].style.display ="block";
+      const arrows = document.getElementsByClassName(
+        "fa-arrows-up-down-left-right"
+      );
+      arrows[0].style.display = "block"; // refait apparaître les flèches si on ajoute un projet, au cas où tous les projets avaient été supprimés
     })
-    
+
     .catch((error) => {
       alert(error);
     });
@@ -451,7 +466,6 @@ document.addEventListener("click", function (event) {
     const input = document.getElementById("form-img");
     const preview = document.getElementById("preview");
     const maxSize = 4000000; // 4 Mo en octets
-    const backgroundFormImg = document.getElementById("form-img");
     input.addEventListener("change", () => {
       // Récupère le fichier sélectionné
       const file = input.files[0];
@@ -470,7 +484,7 @@ document.addEventListener("click", function (event) {
           // Affiche l'image dans l'élément img et le fait apparaître
           preview.src = reader.result;
           preview.style.display = "block";
-          backgroundFormImg.style.background = "#E8F1F7"; //remplace l'image de fond du formulaire par uniquement de la couleur
+          document.getElementById("button-label").style.display ="none";
         });
         reader.readAsDataURL(file);
       } else {
@@ -478,7 +492,6 @@ document.addEventListener("click", function (event) {
         alert("Veuillez sélectionner une image valide.");
         const form = document.getElementById("form-modal");
         form.reset();
-        
       }
     });
   }
