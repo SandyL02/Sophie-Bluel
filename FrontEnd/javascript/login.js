@@ -1,13 +1,6 @@
-// CHANGER LE STYLE SANS TOUCHER AU HTML
-const footer = document.getElementsByTagName("footer");
-const lis = document.getElementsByTagName("li");
-const login = lis[2];
-const main = document.getElementsByTagName("main");
-
-let message = document.createElement("div");
-
-login.style.fontWeight = "bold";
-footer[0].style.marginTop = "280px";
+// CHANGER LE STYLE EN MANIPULANT LE DOM UNIQUEMENT
+document.getElementsByTagName("li")[2].style.fontWeight = "bold";
+document.getElementsByTagName("footer")[0].style.marginTop = "280px";
 
 // CONNEXION DE L ADMIN VIA L API
 

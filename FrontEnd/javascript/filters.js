@@ -1,50 +1,67 @@
 // on veut créer les filtres sous forme de li, en se servant de l'api categories
-fetch("http://localhost:5678/api/categories")
-  .then((res) => res.json())
-  .then((categories) => {
-    const filters = document.createElement("ul");
-    filters.id = "ulfilters";
-    const sibling = document.getElementsByClassName("gallery");
-    let parent = document.getElementById("portfolio");
-    parent.appendChild(filters);
-    parent.insertBefore(filters, sibling[0]);
-    let tousLi = document.createElement("li");
-    tousLi.textContent = "Tous";
-    filters.appendChild(tousLi);
+function createCategoryFilters() {
+  // Appeler l'API de catégories
+  fetch("http://localhost:5678/api/categories")
+    .then((response) => response.json())
+    .then((categories) => {
+      // Créer la liste de filtres de catégorie
+      const categoryFilterList = document.createElement("ul");
+      categoryFilterList.id = "ulfilters";
 
-    for (category of categories) {
-      let newLi = document.createElement("li");
-      newLi.textContent = category.name;
-      filters.appendChild(newLi);
-    }
-  });
+      // Obtenir l'élément parent et le sibling
+      const sibling = document.getElementsByClassName("gallery");
+      const parent = document.getElementById("portfolio");
+
+      // Ajouter la liste de filtres au DOM
+      parent.appendChild(categoryFilterList);
+      parent.insertBefore(categoryFilterList, sibling[0]);
+
+      // Créer un bouton de filtre "Tous"
+      const allFilterButton = document.createElement("li");
+      allFilterButton.textContent = "Tous";
+      categoryFilterList.appendChild(allFilterButton);
+
+      // Créer un bouton de filtre pour chaque catégorie
+      for (let category of categories) {
+        const categoryFilterButton = document.createElement("li");
+        categoryFilterButton.textContent = category.name;
+        categoryFilterList.appendChild(categoryFilterButton);
+      }
+    });
+}
+createCategoryFilters();
 
 //on veut maintenant rendre ces filtres fonctionnels donc on change d'api pour récupérer le backend des projets
 fetch("http://localhost:5678/api/works")
   .then((res) => res.json())
   .then((works) => {
+    // Obtenir les boutons de filtre et la galerie
+    const filterButtons = document.querySelectorAll("#portfolio li");
     const gallery = document.getElementsByClassName("gallery");
-    let newLi = document.querySelectorAll("#portfolio li");
 
-    for (let i = 0; i < newLi.length; i++) {
-      newLi[i].addEventListener("click", function () {
-        // on réinitialise tous les boutons avant de mettre à jour la couleur du bouton actif
-        for (let j = 0; j < newLi.length; j++) {
-          newLi[j].style.backgroundColor = "";
-          newLi[j].style.color = "";
+    // Ajouter un gestionnaire d'événements à chaque bouton de filtre
+    for (let i = 0; i < filterButtons.length; i++) {
+      filterButtons[i].addEventListener("click", function () {
+
+        // Réinitialiser tous les boutons avant de mettre à jour la couleur du bouton actif
+        for (let j = 0; j < filterButtons.length; j++) {
+          filterButtons[j].style.backgroundColor = "";
+          filterButtons[j].style.color = "";
         }
-        // on met à jour la couleur du bouton actif
-        newLi[i].style.backgroundColor = "#1D6154";
-        newLi[i].style.color = "white";
+        // Mettre à jour la couleur du bouton actif
+        filterButtons[i].style.backgroundColor = "#1D6154";
+        filterButtons[i].style.color = "white";
 
+        // Supprimer les figures de la galerie
         while (gallery[0].firstChild) {
-          gallery[0].removeChild(gallery[0].firstChild); //supprime chaque figure de la galerie dès que l'on clique sur un filtre
+          gallery[0].removeChild(gallery[0].firstChild);
         }
+
+        // Ajouter les projets filtrés à la galerie
         for (work of works) {
-          //on ajoute uniquement au HTML les projets qui ont la bonne catégorie OU tous les projets si on clique sur TOUS
           if (
-            work.category.name === newLi[i].textContent ||
-            newLi[i].textContent === "Tous"
+            work.category.name === filterButtons[i].textContent ||
+            filterButtons[i].textContent === "Tous"
           ) {
             addWork(work);
           }

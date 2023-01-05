@@ -1,16 +1,19 @@
-fetch("http://localhost:5678/api/works")
+// FONCTION QUI AJOUTE DYNAMIQUEMENT LES PROJETS A LA GALERIE
+function gallery() {fetch("http://localhost:5678/api/works")
   .then((res) => res.json())
   .then((works) => {
-    // BOUCLE QUI CREE DE NOUVEAUX ELEMENTS SANS INNERHTML
+    // boucle qui créé de nouveaux projets via l'api
     for (work of works) {
       addWork(work);
     }
-  });
+  })};
+gallery();
 
+// FONCTION QUI CREE UN PROJET DANS LE DOM VIA JAVASCRIPT
 function addWork(work) {
   const gallery = document.getElementsByClassName("gallery");
   let newFigure = document.createElement("figure");
-  //ne pas oublier le [0] car il s'agit d'une classe et il faut donc sélectionner quelque chose
+  //ne pas oublier le [0] car il s'agit d'un tableau puisque c'est une classe et il faut donc sélectionner quelque chose
   gallery[0].appendChild(newFigure);
   newFigure.setAttribute("data-id", work.id);
 
@@ -27,8 +30,7 @@ function addWork(work) {
 }
 
 // FONCTION QUI PERMET DE SE CONNECTER OU DE SE DECONNECTER EN FONCTION DU TEXTCONTENT DE LA LI LOGIN OU LOGOUT
-const lis = document.getElementsByTagName("li");
-const login = lis[2];
+const login =document.getElementsByTagName("li")[2];
 
 login.addEventListener("click", function () {
   if (login.textContent === "login") {
@@ -44,53 +46,49 @@ function editPage() {
   let token = sessionStorage.getItem("token");
 
   if (token) {
+
     login.textContent = "logout"; // permet de changer le contenu de la li login, pour devenir logout car nous sommes désormais connectés
 
     // création des boutons modifier et du mode édition
 
-    let imgIntroduction = document.querySelector("#introduction img");
-    imgIntroduction.insertAdjacentHTML(
+    document.querySelector("#introduction img").insertAdjacentHTML(
       "afterend",
       `<div class="modify-img"><i class="fa-regular fa-pen-to-square"></i> modifier</div>`
     );
 
-    let description = document.querySelector("#introduction article");
-    description.insertAdjacentHTML(
+    document.querySelector("#introduction article").insertAdjacentHTML(
       "afterbegin",
       `<div class="modify-description"><i class="fa-regular fa-pen-to-square"></i> modifier</div>`
     );
 
-    let modifyWorks = document.querySelector("#portfolio  h2");
-    modifyWorks.insertAdjacentHTML(
+    document.querySelector("#portfolio  h2").insertAdjacentHTML(
       "beforeend",
       `<div class="modify-works"><i class="fa-regular fa-pen-to-square"></i> modifier</div>`
     );
 
-    let header = document.getElementsByTagName("header");
     let editMode = document.createElement("div");
 
     editMode.insertAdjacentHTML(
       "afterbegin",
       `<div class= "banner"><i class="fa-regular fa-pen-to-square"></i> Mode édition <button class="button">publier les changements</button></div>`
     );
-    header[0].insertBefore(editMode, header[0].firstChild);
+    document.getElementsByTagName("header")[0].insertBefore(editMode, document.getElementsByTagName("header")[0].firstChild);
 
     // disparition des filtres en mode édition
     setTimeout(function () {
-      const ulfilters = document.getElementById("ulfilters");
-      ulfilters.style.display = "none";
+      document.getElementById("ulfilters").style.display = "none";
     }, 200);
 
     // augmentation de la margin bottom du titre suite à la suppression des filtres
-    const portfolioTitle = document.querySelector("#portfolio h2");
-    portfolioTitle.style.marginBottom = "80px";
+    document.querySelector("#portfolio h2").style.marginBottom = "60px";
+
   }
 }
 
 editPage(); //appel de la fonction editPage si l'admin est connecté
 
 function addPicture(work) {
-  const galeryImg = document.getElementsByClassName("js-galery");
+  
   const newFigure = document.createElement("figure");
   newFigure.setAttribute("data-id", work.id);
 
@@ -110,20 +108,20 @@ function addPicture(work) {
   newFigure.appendChild(trashbin);
   newFigure.appendChild(figCaption);
 
-  galeryImg[0].appendChild(newFigure);
+  document.getElementsByClassName("js-galery")[0].appendChild(newFigure);
 }
 
 // FONCTION QUI PERMET DE FAIRE APPARAITRE LA MODALE POUR MODIFIER LES PROJETS
 
-const body = document.getElementsByTagName("body");
+const main = document.getElementsByTagName("main");
 const editWorks = document.getElementsByClassName("modify-works");
 let modalGenerated = false;
 
 // background grisé
 function createBackground() {
-  let newDiv = document.createElement("div");
-  newDiv.className = "js-modal-background";
-  body[0].appendChild(newDiv);
+  let background = document.createElement("div");
+  background.className = "js-modal-background";
+  main[0].appendChild(background);
 }
 function createModal() {
   // création entièrement en javascript de la modale via createElement
@@ -169,19 +167,19 @@ function createModal() {
 
   aside.appendChild(divButton);
 
-  body[0].appendChild(aside);
+  main[0].appendChild(aside);
 }
 
 // si on clique sur le bouton Modifier des projets
 document.addEventListener("click", function (event) {
   if (event.target.matches(".modify-works")) {
     // si la modale existe déjà mais était cachée
-    if (modalGenerated === true) {
+    if (modalGenerated) {
       modal[0].style.display = "block";
       outOfModal[0].style.display = "block";
 
       // si la modale (et le background) n'existent pas encore on les créée
-    } else if (modalGenerated === false) {
+    } else if (!modalGenerated) {
       createBackground();
       createModal();
       // la modale est générée donc on retourne true pour ne pas multiplier la modale dans le code source
@@ -190,11 +188,10 @@ document.addEventListener("click", function (event) {
   }
 });
 
-let modal = document.getElementsByClassName("js-modal");
-let outOfModal = document.getElementsByClassName("js-modal-background");
-let crossModal = document.getElementsByClassName("fa-xmark");
-let modalPicture = document.getElementsByClassName("js-modal-picture");
-let closeModalTwo = document.getElementsByClassName("close-modale-picture");
+const modal = document.getElementsByClassName("js-modal");
+const outOfModal = document.getElementsByClassName("js-modal-background");
+const modalPicture = document.getElementsByClassName("js-modal-picture");
+
 
 function closeModal() {
   modal[0].style.display = "none";
@@ -229,15 +226,12 @@ document.addEventListener("click", function (event) {
 // SUPPRESSION D'UN TRAVAIL DE L'ARCHITECTE
 document.addEventListener("click", function (event) {
   const trashbins = document.getElementsByClassName("fa-trash-can");
+
   for (let trashbin of trashbins) {
     if (event.target === trashbin) {
-      const confirmDeletion = confirm(
-        "Voulez-vous vraiment supprimer ce projet ?"
-      );
+      const confirmDeletion = confirm("Voulez-vous vraiment supprimer ce projet ?");
       if (confirmDeletion) {
-        const fetchUrl =
-          "http://localhost:5678/api/works/" + trashbin.dataset.id;
-        fetch(fetchUrl, {
+        fetch("http://localhost:5678/api/works/" + trashbin.dataset.id, {
           method: "DELETE",
           headers: {
             Authorization: "Bearer " + sessionStorage.getItem("token"),
@@ -245,13 +239,9 @@ document.addEventListener("click", function (event) {
         });
         document.querySelector(`[data-id="${trashbin.dataset.id}"`).remove(); //supprime le projet de façon dynamique sur la page du site
         trashbin.parentElement.remove(); //supprime le projet dans la modale
-        alert("Projet supprimé !");
-        const arrows = document.getElementsByClassName(
-          "fa-arrows-up-down-left-right"
-        );
         const jsGalery = document.getElementsByClassName("js-galery");
         if (!jsGalery[0].firstChild) {
-          arrows[0].style.display = "none"; // si le dernier projet de la galerie est supprimé, les flèches sont cachées
+          document.getElementsByClassName("fa-arrows-up-down-left-right")[0].style.display = "none"; // si le dernier projet de la galerie est supprimé, les flèches sont cachées
         }
       }
     }
@@ -303,18 +293,22 @@ function createModalPicture() {
     </form>`
   );
   aside.appendChild(modalDivNewPicture);
+  
 
   let divButtonValider = document.createElement("div");
   divButtonValider.className = "button-valider";
+
   let button = document.createElement("button");
   button.textContent = "Valider";
   button.className = "submit-work grey-button";
   button.id = "submit-work";
+
   divButtonValider.appendChild(button);
   aside.appendChild(divButtonValider);
 
-  body[0].appendChild(aside);
+  main[0].appendChild(aside);
 }
+
 
 let modalPictureGenerated = false;
 
@@ -322,9 +316,9 @@ let modalPictureGenerated = false;
 document.addEventListener("click", function (event) {
   if (event.target.matches("#addPicture")) {
     modal[0].style.display = "none"; // ferme la modale car on fait apparaître la modale picture
-    if (modalPictureGenerated === true) {
+    if (modalPictureGenerated) {
       modalPicture[0].style.display = "block"; //on refait apparaître la modale picture si elle existe déjà
-    } else if (modalPictureGenerated === false) {
+    } else if (!modalPictureGenerated) {
       //si la modale n'existe pas on appelle la fonction createModalPicture
       createModalPicture();
       // la modale est générée donc on retoune true pour ne pas multiplier la modale picture dans le code source
@@ -374,10 +368,7 @@ function sendWork() {
       modalPicture[0].style.display = "none"; //passe sur la première modale pour voir le projet s'ajouter
       modal[0].style.display = "block";
       addNewElement(); //ajoute le projet dans la liste d'image de la modale
-      const arrows = document.getElementsByClassName(
-        "fa-arrows-up-down-left-right"
-      );
-      arrows[0].style.display = "block"; // refait apparaître les flèches si on ajoute un projet, au cas où tous les projets avaient été supprimés
+      document.getElementsByClassName("fa-arrows-up-down-left-right")[0].style.display = "block"; // refait apparaître les flèches si on ajoute un projet, au cas où tous les projets avaient été supprimés
     })
 
     .catch((error) => {
@@ -410,7 +401,7 @@ function addNewElement() {
 }
 
 // FONCTION QUI CHANGE LA COULEUR DU BOUTON VALIDER QUAND LES CHAMPS DU FORMULAIRE SONT REMPLIS
-
+let formIsValid = false;
 function checkForm() {
   const workimage = document.getElementById("form-img");
   const worktitle = document.getElementById("form-title");
@@ -422,34 +413,27 @@ function checkForm() {
     workcategory.value != ""
   ) {
     button.style.backgroundColor = "#1D6154"; //le bouton devient vert
+    formIsValid = true;
   } else {
     button.style.backgroundColor = "#A7A7A7"; // le bouton reste gris
+    formIsValid= false;
   }
 }
 
 // Quand on rempli le formulaire, on vérifie quand chaque champ change si tout les champs sont remplis, le bouton valider devient vert
 document.addEventListener("click", function (event) {
   if (event.target.matches("#addPicture")) {
-    const workimage = document.getElementById("form-img");
-    const worktitle = document.getElementById("form-title");
-    const workcategory = document.getElementById("form-category");
-    workimage.addEventListener("change", checkForm); //appelle la fonction qui change la couleur du bouton dès qu'un changement est detecté dans chaque champ
-    worktitle.addEventListener("change", checkForm);
-    workcategory.addEventListener("change", checkForm);
+    //appelle la fonction qui change la couleur du bouton dès qu'un changement est detecté dans chaque champ
+    document.getElementById("form-img").addEventListener("change", checkForm); 
+    document.getElementById("form-title").addEventListener("change", checkForm);
+    document.getElementById("form-category").addEventListener("change", checkForm);
   }
 });
 
 //Quand on clique sur valider on appelle la fonction sendwork pour ajouter le nouveau projet
 document.addEventListener("click", function (event) {
   if (event.target.matches("#submit-work")) {
-    const workimage = document.getElementById("form-img");
-    const worktitle = document.getElementById("form-title");
-    const workcategory = document.getElementById("form-category");
-    if (
-      workimage.files.length == 0 ||
-      worktitle.value == "" ||
-      workcategory.value == ""
-    ) {
+    if (!formIsValid) {
       // on vérifie que tous les champs soient remplis
       alert("Veuillez remplir tous les champs du formulaire");
       return;
@@ -471,7 +455,7 @@ document.addEventListener("click", function (event) {
       const file = input.files[0];
       // Vérifie que le fichier est une image png OU jpg OU jpeg ET de moins de 4 mo
       if (
-        (file.type.startsWith("image/png") ||
+        ( file.type.startsWith("image/png") ||
           file.type.startsWith("image/jpeg") ||
           file.type.startsWith("image/jpg")) &&
         file.size < maxSize
@@ -490,6 +474,8 @@ document.addEventListener("click", function (event) {
       } else {
         preview.src = "#";
         alert("Veuillez sélectionner une image valide.");
+        document.getElementById("button-label").style.display ="block";
+        preview.style.display = "none";
         const form = document.getElementById("form-modal");
         form.reset();
       }
