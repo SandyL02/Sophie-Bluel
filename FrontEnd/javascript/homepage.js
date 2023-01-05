@@ -1,4 +1,6 @@
-// FONCTION QUI AJOUTE DYNAMIQUEMENT LES PROJETS A LA GALERIE
+/**
+ * FONCTION QUI AJOUTE DYNAMIQUEMENT LES PROJETS A LA GALERIE
+ */
 function gallery() {fetch("http://localhost:5678/api/works")
   .then((res) => res.json())
   .then((works) => {
@@ -8,12 +10,14 @@ function gallery() {fetch("http://localhost:5678/api/works")
     }
   })};
 gallery();
-
-// FONCTION QUI CREE UN PROJET DANS LE DOM VIA JAVASCRIPT
+/**
+ * FONCTION QUI CREE UN PROJET DANS LE DOM VIA JAVASCRIPT
+ * @param {string} work 
+ */
 function addWork(work) {
   const gallery = document.getElementsByClassName("gallery");
   let newFigure = document.createElement("figure");
-  //ne pas oublier le [0] car il s'agit d'un tableau puisque c'est une classe et il faut donc sélectionner quelque chose
+  
   gallery[0].appendChild(newFigure);
   newFigure.setAttribute("data-id", work.id);
 
@@ -28,65 +32,67 @@ function addWork(work) {
   newFigure.appendChild(img);
   newFigure.appendChild(figCaption);
 }
-
-// FONCTION QUI PERMET DE SE CONNECTER OU DE SE DECONNECTER EN FONCTION DU TEXTCONTENT DE LA LI LOGIN OU LOGOUT
+/**
+ * FONCTION QUI PERMET DE SE CONNECTER OU DE SE DECONNECTER EN FONCTION DU TEXTCONTENT DE LA LI LOGIN OU LOGOUT
+ */
 const login =document.getElementsByTagName("li")[2];
-
 login.addEventListener("click", function () {
   if (login.textContent === "login") {
     window.location.href = "login.html"; // renvoie à la page login si le texte est login
   } else {
-    sessionStorage.removeItem("token");
+    document.cookie = "token=;expires=Thu, 01 Jan 1970 00:00:01 GMT";
     window.location.href = "index.html"; //si le texte n'est pas login (donc logout) renvoie à l'index, supprime le token et recharge la page, on sera donc déconnecté
   }
 });
-
-// FONCTION QUI PERMET D ETRE EN MODE EDITEUR EN FAISANT APPARAITRE LES BOUTONS D ACTIONS
+/**
+ * FONCTION POUR RECUPERER LE COOKIE QUE L'ON STOCKE DANS UNE CONSTANTE TOKEN
+ * @param {string} name 
+ * @returns 
+ */
+function getCookie(name) {
+  const value = "; " + document.cookie;
+  const parts = value.split("; " + name + "=");
+  if (parts.length == 2) return parts.pop().split(";").shift();
+};
+const token = getCookie("token");
+/**
+ * FONCTION QUI PERMET D'ETRE EN MODE EDITEUR EN FAISANT APPARAITRE LES BOUTONS D'ACTIONS
+ */
 function editPage() {
-  let token = sessionStorage.getItem("token");
-
-  if (token) {
-
     login.textContent = "logout"; // permet de changer le contenu de la li login, pour devenir logout car nous sommes désormais connectés
-
     // création des boutons modifier et du mode édition
-
     document.querySelector("#introduction img").insertAdjacentHTML(
       "afterend",
       `<div class="modify-img"><i class="fa-regular fa-pen-to-square"></i> modifier</div>`
     );
-
     document.querySelector("#introduction article").insertAdjacentHTML(
       "afterbegin",
       `<div class="modify-description"><i class="fa-regular fa-pen-to-square"></i> modifier</div>`
     );
-
     document.querySelector("#portfolio  h2").insertAdjacentHTML(
       "beforeend",
       `<div class="modify-works"><i class="fa-regular fa-pen-to-square"></i> modifier</div>`
     );
-
     let editMode = document.createElement("div");
-
     editMode.insertAdjacentHTML(
       "afterbegin",
       `<div class= "banner"><i class="fa-regular fa-pen-to-square"></i> Mode édition <button class="button">publier les changements</button></div>`
     );
     document.getElementsByTagName("header")[0].insertBefore(editMode, document.getElementsByTagName("header")[0].firstChild);
-
     // disparition des filtres en mode édition
     setTimeout(function () {
       document.getElementById("ulfilters").style.display = "none";
-    }, 200);
-
     // augmentation de la margin bottom du titre suite à la suppression des filtres
-    document.querySelector("#portfolio h2").style.marginBottom = "60px";
+      document.querySelector("#portfolio h2").style.marginBottom = "60px";
+    }, 200);
+  };
 
-  }
-}
+if (token) {editPage()}; //appel de la fonction editPage si l'admin est connecté
 
-editPage(); //appel de la fonction editPage si l'admin est connecté
-
+/**
+ * FONCTION QUI CREEE LES ELEMENTS D'UN PROJET DANS LA GALERIE
+ * @param {*} work 
+ */
 function addPicture(work) {
   
   const newFigure = document.createElement("figure");
@@ -111,18 +117,21 @@ function addPicture(work) {
   document.getElementsByClassName("js-galery")[0].appendChild(newFigure);
 }
 
-// FONCTION QUI PERMET DE FAIRE APPARAITRE LA MODALE POUR MODIFIER LES PROJETS
-
 const main = document.getElementsByTagName("main");
 const editWorks = document.getElementsByClassName("modify-works");
 let modalGenerated = false;
 
-// background grisé
+/**
+ * CREE LE BACKGROUND EN AJOUTANT DES ELEMENTS AU DOM
+ */
 function createBackground() {
   let background = document.createElement("div");
   background.className = "js-modal-background";
   main[0].appendChild(background);
 }
+/**
+ * CREE LA MODALE EN AJOUTANT DES ELEMENTS AU DOM
+ */
 function createModal() {
   // création entièrement en javascript de la modale via createElement
   let aside = document.createElement("aside");
@@ -170,12 +179,14 @@ function createModal() {
   main[0].appendChild(aside);
 }
 
-// si on clique sur le bouton Modifier des projets
+/**
+ * SI ON CLIQUE SUR MODIFIER LES PROJETS
+ */
 document.addEventListener("click", function (event) {
   if (event.target.matches(".modify-works")) {
-    // si la modale existe déjà mais était cachée
+    // si la modale existe 
     if (modalGenerated) {
-      modal[0].style.display = "block";
+      modal[0].style.display = "block";// on la fait réapparaître
       outOfModal[0].style.display = "block";
 
       // si la modale (et le background) n'existent pas encore on les créée
@@ -192,26 +203,34 @@ const modal = document.getElementsByClassName("js-modal");
 const outOfModal = document.getElementsByClassName("js-modal-background");
 const modalPicture = document.getElementsByClassName("js-modal-picture");
 
-
+/**
+ * FONCTION QUI FERME LA PREMIERE MODALE ET LE BACKGROUND
+ */
 function closeModal() {
   modal[0].style.display = "none";
   outOfModal[0].style.display = "none";
 }
 
-// FERME LA MODALE EN CLIQUANT SUR LA CROIX
+/**
+ * FERME LA MODALE EN CLIQUANT SUR LA CROIX
+ */
 document.addEventListener("click", function (event) {
   if (event.target.matches(".fa-xmark")) {
     closeModal();
   }
 });
-// FERME LA MODALE PICTURE EN CLIQUANT SUR LA CROIX
+/**
+ * FERME LA MODALE PICTURE EN CLIQUANT SUR LA CROIX
+ */
 document.addEventListener("click", function (event) {
   if (event.target.matches(".close-modale-picture")) {
     closeModal();
     modalPicture[0].style.display = "none";
   }
 });
-// FERME LA MODALE EN CLIQUANT EN DEHORS DE LA MODALE VIA LE BACKGROUND GRIS
+/**
+ * FERME LA MODALE EN CLIQUANT EN DEHORS DE LA MODALE VIA LE BACKGROUND GRIS
+ */
 document.addEventListener("click", function (event) {
   if (event.target.matches(".js-modal-background")) {
     if (modal[0].style.display != "none") {
@@ -222,11 +241,11 @@ document.addEventListener("click", function (event) {
     }
   }
 });
-
-// SUPPRESSION D'UN TRAVAIL DE L'ARCHITECTE
+/**
+ * SUPPRESSION D'UN TRAVAIL DE L'ARCHITECTE EN CLIQUANT SUR LA POUBELLE LIEE A UN PROJET
+ */
 document.addEventListener("click", function (event) {
   const trashbins = document.getElementsByClassName("fa-trash-can");
-
   for (let trashbin of trashbins) {
     if (event.target === trashbin) {
       const confirmDeletion = confirm("Voulez-vous vraiment supprimer ce projet ?");
@@ -234,22 +253,36 @@ document.addEventListener("click", function (event) {
         fetch("http://localhost:5678/api/works/" + trashbin.dataset.id, {
           method: "DELETE",
           headers: {
-            Authorization: "Bearer " + sessionStorage.getItem("token"),
+            Authorization: "Bearer " + token,
           },
-        });
-        document.querySelector(`[data-id="${trashbin.dataset.id}"`).remove(); //supprime le projet de façon dynamique sur la page du site
-        trashbin.parentElement.remove(); //supprime le projet dans la modale
-        const jsGalery = document.getElementsByClassName("js-galery");
-        if (!jsGalery[0].firstChild) {
-          document.getElementsByClassName("fa-arrows-up-down-left-right")[0].style.display = "none"; // si le dernier projet de la galerie est supprimé, les flèches sont cachées
-        }
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Erreur lors de la suppression du projet");
+            }
+            // Suppression du projet dans le DOM si la réponse est "OK"
+            document
+              .querySelector(`[data-id="${trashbin.dataset.id}"`)
+              .remove();
+            trashbin.parentElement.remove();
+            const jsGalery = document.getElementsByClassName("js-galery");
+            if (!jsGalery[0].firstChild) {
+              document.getElementsByClassName(
+                "fa-arrows-up-down-left-right"
+              )[0].style.display = "none";
+            }
+          })
+          .catch((error) => {
+            // Traitement de l'erreur
+            console.error(error);
+          });
       }
     }
   }
 });
-
-// AJOUT DE LA MODALE AJOUTER PROJET
-
+/**
+ * CREATION DE LA MODALE AJOUTER PROJET EN MANIPULANT LE DOM
+ */
 function createModalPicture() {
   // création entièrement en javascript de la modale nouveau projet via createElement
   let aside = document.createElement("aside");
@@ -307,12 +340,11 @@ function createModalPicture() {
   aside.appendChild(divButtonValider);
 
   main[0].appendChild(aside);
-}
-
-
+};
 let modalPictureGenerated = false;
-
-// CREER LA MODALE PROJET OU LA REOUVRIR
+/**
+ * SI ON CLIQUE SUR LE BOUTON AJOUTER UNE PHOTO ON CREE LA MODALE PROJET OU ON LA REOUVRE
+ */
 document.addEventListener("click", function (event) {
   if (event.target.matches("#addPicture")) {
     modal[0].style.display = "none"; // ferme la modale car on fait apparaître la modale picture
@@ -326,17 +358,18 @@ document.addEventListener("click", function (event) {
     }
   }
 });
-
-// RETOURNE SUR L'ANCIENNE MODALE SI ON CLIQUE SUR PRECEDENT
+/**
+ * RETOURNE SUR L'ANCIENNE MODALE SI ON CLIQUE SUR PRECEDENT
+ */
 document.addEventListener("click", function (event) {
   if (event.target.matches(".fa-arrow-left")) {
     modalPicture[0].style.display = "none";
     modal[0].style.display = "block";
   }
 });
-
-// ENVOYER UN NOUVEAU PROJET
-
+/**
+ * ENVOYER UN NOUVEAU PROJET
+ */
 function sendWork() {
   const workimage = document.getElementById("form-img");
   const worktitle = document.getElementById("form-title");
@@ -349,7 +382,7 @@ function sendWork() {
   fetch("http://localhost:5678/api/works", {
     method: "POST",
     headers: {
-      Authorization: "Bearer " + sessionStorage.getItem("token"),
+      Authorization: "Bearer " + token,
     },
     body: data,
   })
@@ -370,13 +403,13 @@ function sendWork() {
       addNewElement(); //ajoute le projet dans la liste d'image de la modale
       document.getElementsByClassName("fa-arrows-up-down-left-right")[0].style.display = "block"; // refait apparaître les flèches si on ajoute un projet, au cas où tous les projets avaient été supprimés
     })
-
     .catch((error) => {
       alert(error);
     });
-}
-
-// FONCTION QUI PERMET DAJOUTER LE DERNIER PROJET DANS LA GALERIE
+};
+/**
+ * FONCTION QUI PERMET D'AJOUTER LE DERNIER PROJET DANS LA GALERIE
+ */
 function addNewWork() {
   fetch("http://localhost:5678/api/works")
     .then((res) => res.json())
@@ -386,9 +419,10 @@ function addNewWork() {
         addWork(work);
       }
     });
-}
-
-// FONCTION QUI PERMET DAJOUTER LE DERNIER PROJET DANS LA GALERIE DE LA MODALE
+};
+/**
+ * FONCTION QUI PERMET DAJOUTER LE DERNIER PROJET DANS LA GALERIE DE LA MODALE
+ */
 function addNewElement() {
   fetch("http://localhost:5678/api/works")
     .then((res) => res.json())
@@ -400,8 +434,10 @@ function addNewElement() {
     });
 }
 
-// FONCTION QUI CHANGE LA COULEUR DU BOUTON VALIDER QUAND LES CHAMPS DU FORMULAIRE SONT REMPLIS
 let formIsValid = false;
+/**
+ * FONCTION QUI CHANGE LA COULEUR DU BOUTON VALIDER QUAND LES CHAMPS DU FORMULAIRE SONT REMPLIS
+ */
 function checkForm() {
   const workimage = document.getElementById("form-img");
   const worktitle = document.getElementById("form-title");
@@ -419,8 +455,9 @@ function checkForm() {
     formIsValid= false;
   }
 }
-
-// Quand on rempli le formulaire, on vérifie quand chaque champ change si tout les champs sont remplis, le bouton valider devient vert
+/**
+ * QUAND CHAQUE CHAMP DU FORMULAIRE EST REMPLI LE BOUTON VALIDER DEVIENT VERT
+ */
 document.addEventListener("click", function (event) {
   if (event.target.matches("#addPicture")) {
     //appelle la fonction qui change la couleur du bouton dès qu'un changement est detecté dans chaque champ
@@ -429,8 +466,9 @@ document.addEventListener("click", function (event) {
     document.getElementById("form-category").addEventListener("change", checkForm);
   }
 });
-
-//Quand on clique sur valider on appelle la fonction sendwork pour ajouter le nouveau projet
+/**
+ * QUAND ON CLIQUE SUR VALIDER ON VERIFIE QUE LE FORMULAIRE EST REMPLI PUIS ON APPELLE LA FONCTION SENDWORK POUR AJOUTER LE NOUVEAU PROJET
+ */
 document.addEventListener("click", function (event) {
   if (event.target.matches("#submit-work")) {
     if (!formIsValid) {
@@ -443,8 +481,9 @@ document.addEventListener("click", function (event) {
     event.preventDefault();
   }
 });
-
-// VERIFIE LE FORMAT DE LA PHOTO ENVOYEE ET L'AFFICHE DANS LE FORMULAIRE
+/**
+ * VERIFIE LE FORMAT DE LA PHOTO ENVOYEE ET L'AFFICHE DANS LE FORMULAIRE
+ */
 document.addEventListener("click", function (event) {
   if (event.target.matches("#addPicture")) {
     const input = document.getElementById("form-img");

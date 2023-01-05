@@ -1,4 +1,6 @@
-// on veut créer les filtres sous forme de li, en se servant de l'api categories
+/**
+ * CREE LES FILTRES SOUS FORME DE LI EN SE SERVANT DE L'API CATEGORIES
+ */
 function createCategoryFilters() {
   // Appeler l'API de catégories
   fetch("http://localhost:5678/api/categories")
@@ -42,7 +44,6 @@ fetch("http://localhost:5678/api/works")
     // Ajouter un gestionnaire d'événements à chaque bouton de filtre
     for (let i = 0; i < filterButtons.length; i++) {
       filterButtons[i].addEventListener("click", function () {
-
         // Réinitialiser tous les boutons avant de mettre à jour la couleur du bouton actif
         for (let j = 0; j < filterButtons.length; j++) {
           filterButtons[j].style.backgroundColor = "";
