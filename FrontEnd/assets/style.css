@@ -277,8 +277,9 @@ footer nav ul {
 	color: black;
 	font-weight: normal;
 	position: relative;
-	left:150px;
+	left:60%;
 	bottom: 20px;
+	width: 100px;
 }
 
 /*PARTIE MODALES */

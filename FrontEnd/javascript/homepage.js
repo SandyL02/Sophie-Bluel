@@ -190,7 +190,7 @@ document.addEventListener("click", function (event) {
       outOfModal[0].style.display = "block";
 
       // si la modale (et le background) n'existent pas encore on les créée
-    } else if (!modalGenerated) {
+    } else {
       createBackground();
       createModal();
       // la modale est générée donc on retourne true pour ne pas multiplier la modale dans le code source
@@ -262,14 +262,11 @@ document.addEventListener("click", function (event) {
             }
             // Suppression du projet dans le DOM si la réponse est "OK"
             document
-              .querySelector(`[data-id="${trashbin.dataset.id}"`)
-              .remove();
+              .querySelector(`[data-id="${trashbin.dataset.id}"`).remove();
             trashbin.parentElement.remove();
             const jsGalery = document.getElementsByClassName("js-galery");
             if (!jsGalery[0].firstChild) {
-              document.getElementsByClassName(
-                "fa-arrows-up-down-left-right"
-              )[0].style.display = "none";
+              document.getElementsByClassName("fa-arrows-up-down-left-right")[0].style.display = "none";
             }
           })
           .catch((error) => {
@@ -388,7 +385,7 @@ function sendWork() {
   })
     .then((res) => {
       if (res.ok) {
-        alert("Code 201: Created");
+        alert("Projet ajouté !");
         return res.json();
       } else {
         throw new Error(res.statusText);
@@ -401,6 +398,10 @@ function sendWork() {
       modalPicture[0].style.display = "none"; //passe sur la première modale pour voir le projet s'ajouter
       modal[0].style.display = "block";
       addNewElement(); //ajoute le projet dans la liste d'image de la modale
+      const form = document.getElementById("form-modal");
+      form.reset();
+      const button = document.getElementById("submit-work");
+      button.style.backgroundColor = "#A7A7A7"; // le bouton redevient gris
       document.getElementsByClassName("fa-arrows-up-down-left-right")[0].style.display = "block"; // refait apparaître les flèches si on ajoute un projet, au cas où tous les projets avaient été supprimés
     })
     .catch((error) => {
@@ -415,9 +416,7 @@ function addNewWork() {
     .then((res) => res.json())
     .then((works) => {
       const work = works[works.length - 1];
-      if (work) {
         addWork(work);
-      }
     });
 };
 /**
@@ -428,9 +427,7 @@ function addNewElement() {
     .then((res) => res.json())
     .then((works) => {
       const work = works[works.length - 1];
-      if (work) {
         addPicture(work);
-      }
     });
 }
 
